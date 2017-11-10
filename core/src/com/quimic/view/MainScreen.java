@@ -3,7 +3,6 @@ package com.quimic.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -77,7 +76,7 @@ public class MainScreen implements Screen {
 		// Cria o grid para inserir os botões do jogo
 		table = new Table(); // Cria a tabela
 		table.setFillParent(true);
-		table.setDebug(true);
+		//table.setDebug(true); // linhas de depuração na tela
 		stage.addActor(table); // Adiciona a tabela no stage	
 
 		// Cria os botões da tela principal

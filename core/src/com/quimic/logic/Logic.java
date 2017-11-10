@@ -41,7 +41,7 @@ public class Logic {
 	public Vector3 mouse_position = new Vector3(0,0,0);
 	
 	public int clickDelayCounter = 0;
-    public int clickDelayCounterLength = 15;
+    public int clickDelayCounterLength = 10;
 	
 	// ajeitar depois
 	ArrayList<Texture> elementsT;
@@ -117,6 +117,8 @@ public class Logic {
 	                                    
 	                                    
 	                                    clickDelayCounter = 0;
+	                                    if (soundEffects)
+	                                    	combine.play();
 
 	                                }
 	                            }
@@ -142,6 +144,8 @@ public class Logic {
 	                                    tiles[activeX + 1][activeY].sprite = new Sprite(this.elementsT.get(savedType));
 
 	                                    clickDelayCounter = 0;
+	                                    if (soundEffects)
+	                                    	combine.play();
 
 	                                }
 	                            }
@@ -167,6 +171,8 @@ public class Logic {
 	                                    tiles[activeX][activeY + 1].sprite = new Sprite(this.elementsT.get(savedType));
 
 	                                    clickDelayCounter = 0;
+	                                    if (soundEffects)
+	                                    	combine.play();
 
 	                                }
 	                            }
@@ -192,6 +198,8 @@ public class Logic {
 	                                    tiles[activeX][activeY - 1].sprite = new Sprite(this.elementsT.get(savedType));
 	                                    
 	                                    clickDelayCounter = 0;
+	                                    if (soundEffects)
+	                                    	combine.play();
 
 	                                }
 	                            }

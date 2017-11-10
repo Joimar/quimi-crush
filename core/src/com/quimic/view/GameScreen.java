@@ -2,15 +2,23 @@ package com.quimic.view;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.quimic.game.QuimiCrush;
 import com.quimic.logic.Logic;
@@ -30,13 +38,15 @@ public class GameScreen implements Screen {
 		private OrthographicCamera cam;
 		
 		public float tilesXOffset = 0;
-	    public float tilesYOffset = 0;	     
+	    public float tilesYOffset = 0;	     		   
 	
-	
+	    TextButton back;
+	    
 	public GameScreen(QuimiCrush parent) {		
 
 		this.parent = parent;
 	}
+		
 
 	@Override
 	public void show() {
@@ -71,20 +81,40 @@ public class GameScreen implements Screen {
 		
 		//cam = new OrthographicCamera(32,24);
 		cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);				
-		logic = new Logic(parent, tiles, elementsT, cam);			
-
+		logic = new Logic(parent, tiles, elementsT, cam);		
+		
+		parent.assetsManager.queueAddSkin(); // Carrega as skins  
+		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
+		Skin skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
+					
+		stage = new Stage(new ScreenViewport());		
+		back = new TextButton("Voltar", skin);
+		back.padLeft(parent.windowWidth);		
+		stage.addActor(back);
+		Gdx.input.setInputProcessor(stage);
+		back.addListener(new ChangeListener() {			
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				
+			}
+		});		
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(float delta) {						
 		logic.update();
 		
 		// Limpar a tela
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		// Desenha a textura
-		batch.begin();	
+		BitmapFont font = new BitmapFont();
+
+		// Desenha a textura	
+		back.right();
+		batch.begin();
+		font.setColor(Color.BLACK);
+		font.draw(batch, "Voltar", 50, parent.windowHeight-100, parent.windowWidth-100, 100, false);		
 		
 		for (int i = 0; i < tiles.length; i++) {
 			for (int j = 0; j < tiles.length; j++) {						
@@ -94,10 +124,15 @@ public class GameScreen implements Screen {
 				batch.draw(tiles[i][j].sprite, tiles[i][j].x, tiles[i][j].y, 64, 64);
 	            batch.setColor(1,1,1,1);
 		    }
-		}
+		}								
+						
+		batch.end();
 		
+		if (Gdx.input.isTouched()) 
+			if (Gdx.input.getX() >= (parent.windowWidth-100) && (parent.windowHeight-Gdx.input.getY()) >= (parent.windowHeight-150))
+				parent.changeScreen(QuimiCrush.MAIN);
 		
-		batch.end();		
+		System.out.println(Gdx.input.getX()+ " : "+ Gdx.input.getY());
 	}
 
 	@Override
