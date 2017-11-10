@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.quimic.game.QuimiCrush;
 import com.quimic.logic.Logic;
 import com.quimic.tile.Tile;
@@ -16,17 +19,22 @@ import com.quimic.tile.Tile;
 public class GameScreen implements Screen {
 	private QuimiCrush parent;
 	
+	private Stage          stage; // Controla e reage às entradas do usuário	
+	private ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un
+	
 	 SpriteBatch batch;	
 		ArrayList<Texture> elementsT;	
 		Tile[][] tiles;
 		
 		Logic logic;
+		private OrthographicCamera cam;
 		
 		public float tilesXOffset = 0;
 	    public float tilesYOffset = 0;	     
 	
 	
 	public GameScreen(QuimiCrush parent) {		
+
 		this.parent = parent;
 	}
 
@@ -37,17 +45,17 @@ public class GameScreen implements Screen {
 		
 		elementsT = new ArrayList<Texture>();
 		// Os elementos simples da tabela		
-		elementsT.add(new Texture("chemic/H.png"));  // 0		
-		elementsT.add(new Texture("chemic/O.png"));  // 1
-		elementsT.add(new Texture("chemic/C.png"));  // 2
-		elementsT.add(new Texture("chemic/N.png"));  // 3
-		elementsT.add(new Texture("chemic/Na.png")); // 4	
+		elementsT.add(new Texture("images/game/chemic/H.png"));  // 0		
+		elementsT.add(new Texture("images/game/chemic/O.png"));  // 1
+		elementsT.add(new Texture("images/game/chemic/C.png"));  // 2
+		elementsT.add(new Texture("images/game/chemic/N.png"));  // 3
+		elementsT.add(new Texture("images/game/chemic/Na.png")); // 4	
 		
 		// Os elementos com duas combinações
-		elementsT.add(new Texture("chemic/H2.png"));  // 5
-		elementsT.add(new Texture("chemic/O2.png"));  // 6
-		elementsT.add(new Texture("chemic/N2.png"));  // 7
-		elementsT.add(new Texture("chemic/Na2.png"));  // 8
+		elementsT.add(new Texture("images/game/chemic/H2.png"));  // 5
+		elementsT.add(new Texture("images/game/chemic/O2.png"));  // 6
+		elementsT.add(new Texture("images/game/chemic/N2.png"));  // 7
+		elementsT.add(new Texture("images/game/chemic/Na2.png"));  // 8
 		
 		// Os matches (combinação completa)
 		
@@ -61,7 +69,9 @@ public class GameScreen implements Screen {
 		    }
 		}
 		
-		logic = new Logic(tiles, elementsT);	
+		//cam = new OrthographicCamera(32,24);
+		cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);				
+		logic = new Logic(parent, tiles, elementsT, cam);			
 
 	}
 

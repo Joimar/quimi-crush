@@ -4,18 +4,25 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.quimic.game.QuimiCrush;
+import com.quimic.loader.Loader;
 import com.quimic.tile.Tile;
 
 public class Logic {
 
 	public boolean matched = false;
 	public int savedType = 0;
+	
+	public Loader assetsManager;
+	public Sound combine;
+	public Sound match;
 	
 	//
 	public int windowWidth = Gdx.graphics.getWidth();
@@ -40,17 +47,31 @@ public class Logic {
 	ArrayList<Texture> elementsT;
 	//
 	
+	boolean soundEffects = false; 
 	
-	public Logic(Tile[][] tiles, ArrayList<Texture> elementsT) {
+	public Logic(QuimiCrush parent, Tile[][] tiles, ArrayList<Texture> elementsT, OrthographicCamera cam) {
+		assetsManager = parent.assetsManager;
+		// tells our asset manger that we want to load the sounds set in loadSounds method
+		assetsManager.queueAddSounds();
+		// tells the asset manager to load the sound and wait until finsihed loading.
+		assetsManager.finishLoading();
+		// loads the 2 sounds we use
+		combine = assetsManager.MANAGER.get(assetsManager.COMBINE_SOUND, Sound.class);
+		match = assetsManager.MANAGER.get(assetsManager.MATCH_SOUND, Sound.class);
+		
+		match.setVolume(0, parent.savePreferences.getSoundVolume());
+		combine.setVolume(0, parent.savePreferences.getSoundVolume());
+		soundEffects = parent.savePreferences.isSoundEffectsEnabled();
+		
 		this.tiles = tiles;
 		
 		//
 		this.elementsT = elementsT;	
 		//
 		
-		camera = new OrthographicCamera(windowWidth,windowHeight);
-        viewport = new StretchViewport(windowWidth,windowHeight,camera);
-        viewport.apply();
+		camera = cam;
+        //viewport = new StretchViewport(windowWidth, windowHeight, camera);
+        //viewport.apply();
 	}
 	
 	
@@ -320,6 +341,8 @@ public class Logic {
 		                            }
 		                            System.out.println("Match 3 Horizontal at " + i + " " + j);
 	                        matched = true;
+	                        if (soundEffects)
+	                        	match.play();
 	                    }
 	                }
 	            }
@@ -338,6 +361,7 @@ public class Logic {
 	                        }
 	                        System.out.println("Match 3 Vertical at " + i + " " + j);
 	                        matched = true;
+	                        match.play();
 	                    }
 	                }
 	            }
@@ -356,6 +380,7 @@ public class Logic {
 	                        }
 	                        System.out.println("Match 4 Horizontal at " + i + " " + j);
 	                        matched = true;
+	                        match.play();
 	                    }
 	                }
 	            }
@@ -374,6 +399,7 @@ public class Logic {
 	                        }
 	                        System.out.println("Match 4 Vertical at " + i + " " + j);
 	                        matched = true;
+	                        match.play();
 	                    }
 	                }
 	            }
@@ -392,6 +418,7 @@ public class Logic {
 	                        }
 	                        System.out.println("Match 5 Horizontal at " + i + " " + j);
 	                        matched = true;
+	                        match.play();
 	                    }
 	                }
 	            }
@@ -410,6 +437,7 @@ public class Logic {
 	                        }
 	                        System.out.println("Match 5 Vertical at " + i + " " + j);
 	                        matched = true;
+	                        match.play();
 	                    }
 	                }
 	            }

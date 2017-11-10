@@ -81,6 +81,7 @@ public class QuimiCrush extends Game {
 			playingSong.pause();
 				
 		// Mudando para a tela de loading
+		//this.changeScreen(GAME);
 		loading = new LoadingScreen(this);
 		this.setScreen(loading);
 	}

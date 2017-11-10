@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.quimic.game.QuimiCrush;
 
@@ -47,6 +46,10 @@ public class PreferencesScreen implements Screen {
 	
 //*************************************************************//	
 	
+	/**
+	 * 
+	 * @param parent
+	 */
 	public PreferencesScreen(QuimiCrush parent) {		
 		this.parent = parent;
 		sv = new ScreenViewport();
