@@ -1,106 +1,93 @@
 package com.quimic.game;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.quimic.view.GameScreen;
+import com.quimic.view.LoadingScreen;
+import com.quimic.view.MainScreen;
+import com.quimic.view.PreferencesScreen;
+import com.quimic.loader.Loader;
+import com.quimic.util.SavePreferences;
 
-import com.quimic.logic.Logic;
-import com.quimic.tile.Tile;
-
-public class QuimiCrush extends ApplicationAdapter {
-	SpriteBatch batch;	
-	ArrayList<Texture> elementsT;	
-	Tile[][] tiles;
+public class QuimiCrush extends Game {
+	public static final int MAIN        = 0;
+	public static final int PREFERENCES = 1;
+	public static final int GAME        = 2;
 	
-	Logic logic;
+//*************************************************************//			
+	private LoadingScreen     loading;
+	private MainScreen        main;
+	private PreferencesScreen preferences;
+	private GameScreen        game;	
 	
-	public float tilesXOffset = 0;
-    public float tilesYOffset = 0;	          
+//*************************************************************//		
+	public float           windowWidth;
+    public float           windowHeight;        
+    public SavePreferences savePreferences;
+    public Loader          assetsManager;
+    public Music           playingSong;
     
+//*************************************************************//
+    /**
+     * Altera entre as telas do jogo.
+     * 
+     * @param screen Identificação da nova tela 
+     */
+    public void changeScreen(int screen) {		
+		switch (screen) {
+			case MAIN:
+				if (main == null) main = new MainScreen(this);
+				this.setScreen(main);
+				break;
+			case PREFERENCES:
+				if (preferences == null) preferences = new PreferencesScreen(this);
+				this.setScreen(preferences);
+				break;
+			case GAME:
+				if (game == null) game = new GameScreen(this);
+				this.setScreen(game);
+				break;
+		}
+	}
+              
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		//img = new Texture("badlogic.jpg");			
+		// Inicializando configurações iniciais 
+		assetsManager   = new Loader(); // Gerenciador de ativos
+		savePreferences = new SavePreferences(); // Saves do jogo
+		windowWidth     = Gdx.graphics.getWidth(); // Largura da tela do jogo
+	    windowHeight    = Gdx.graphics.getHeight(); // Altura da tela do jogo	    
+	    System.out.println("X: "+windowWidth+" ... Y: "+windowHeight);			    
+	    
+		// Carregando configurações iniciais			
+		assetsManager.queueAddMusic(); // Carrega a música
+		assetsManager.finishLoading(); // Finaliza o carregamento dos assets  
+		playingSong = assetsManager.MANAGER.get(assetsManager.PLAYING_SONG); // Recupera a música
 		
-		elementsT = new ArrayList<Texture>();
-		// Os elementos simples da tabela		
-		elementsT.add(new Texture("chemic/H.png"));  // 0		
-		elementsT.add(new Texture("chemic/O.png"));  // 1
-		elementsT.add(new Texture("chemic/C.png"));  // 2
-		elementsT.add(new Texture("chemic/N.png"));  // 3
-		elementsT.add(new Texture("chemic/Na.png")); // 4	
+		// Inicia a música do jogo e a coloca em loop
+		playingSong.play();
+		playingSong.setLooping(true);		 
 		
-		// Os elementos com duas combinações
-		elementsT.add(new Texture("chemic/H2.png"));  // 5
-		elementsT.add(new Texture("chemic/O2.png"));  // 6
-		elementsT.add(new Texture("chemic/N2.png"));  // 7
-		elementsT.add(new Texture("chemic/Na2.png"));  // 8
-		
-		// Os matches (combinação completa)
-		
-		
-		tiles = new Tile[6][6];
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles.length; j++) {
-				int type = MathUtils.random(0,4);
-				Tile newTile = new Tile(new Sprite(elementsT.get(type)), type, (i * 64) + tilesXOffset, (j * 64) + tilesYOffset);				
-	            tiles[i][j] = newTile;	            
-		    }
-		}
-		
-		logic = new Logic(tiles, elementsT);				
-	}
-	
-
-	@Override
-	public void render () {
-
-		logic.update();
-		
-		// Limpar a tela
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		// Desenha a textura
-		batch.begin();	
-		
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles.length; j++) {						
-				if (tiles[i][j].activated) { 
-                    batch.setColor(0, 0, 0, 0.5f);
-				}                
-				batch.draw(tiles[i][j].sprite, tiles[i][j].x, tiles[i][j].y, 64, 64);
-	            batch.setColor(1,1,1,1);
-		    }
-		}
-
-		
-		
-		batch.end();		
+		// Carregando configurações iniciais para o volume
+		playingSong.setVolume(savePreferences.getMusicVolume());						
+		if (savePreferences.isMusicEnabled())
+			playingSong.play();
+		else 
+			playingSong.pause();
+				
+		// Mudando para a tela de loading
+		loading = new LoadingScreen(this);
+		this.setScreen(loading);
 	}
 	
 	@Override
 	public void dispose () {
-		batch.dispose();		
-		//img.dispose();
+		playingSong.dispose();
+		assetsManager.MANAGER.dispose();
 	}
-	
-	@Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-    
-    @Override
-    public void resize(int width, int height) {
-    }
 }

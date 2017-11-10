@@ -2,6 +2,7 @@ package com.quimic.tile;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+//extends Actor
 public class Tile {
   
 	public Sprite sprite;
