@@ -3,12 +3,17 @@ package com.quimic.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.quimic.game.QuimiCrush;
 
@@ -16,9 +21,9 @@ public class MainScreen implements Screen {
 	private QuimiCrush parent; // Quem orquestra tudo
 	
 	private Stage          stage; // Controla e reage às entradas do usuário
-	private ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un
+	private ScreenViewport sv;    // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un
 	private Table          table; // Grid do menu
-	private Skin           skin; // Estilo dos botões	
+	private Skin           skin;  // Estilo dos botões	
 	
 //*************************************************************//	
 	private TextButton preferences;
@@ -26,7 +31,9 @@ public class MainScreen implements Screen {
 	private TextButton gameLevel_2;
 	
 //*************************************************************//
-	
+	private TextureAtlas atlas; // Empacotamento das imagens
+	private AtlasRegion  background;
+//*************************************************************//	
 	/**
 	 * 
 	 * @param parent
@@ -36,9 +43,19 @@ public class MainScreen implements Screen {
 		sv = new ScreenViewport();
 		stage = new Stage(sv);
 		
-		parent.assetsManager.queueAddSkin(); // Carrega as skins  
-		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
-		skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin		
+	//	parent.assetsManager.queueAddSkin(); // Carrega as skins  
+		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins		
+		this.loadAssets();
+	}
+	
+	/**
+	 * 
+	 */
+	private void loadAssets() {
+		// get images used to display loading progress
+		atlas = parent.assetsManager.MANAGER.get(parent.assetsManager.LOADING_IMAGES);
+		skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin				
+		background = atlas.findRegion("background");
 	}
 
 	/**
@@ -76,6 +93,7 @@ public class MainScreen implements Screen {
 		// Cria o grid para inserir os botões do jogo
 		table = new Table(); // Cria a tabela
 		table.setFillParent(true);
+		table.setBackground(new TiledDrawable(background));
 		//table.setDebug(true); // linhas de depuração na tela
 		stage.addActor(table); // Adiciona a tabela no stage	
 
@@ -97,7 +115,7 @@ public class MainScreen implements Screen {
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl.glClearColor(0.8f, 0.8f, 0.8f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 
         stage.act();

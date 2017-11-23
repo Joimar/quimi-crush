@@ -21,9 +21,9 @@ public class PreferencesScreen implements Screen {
 	private QuimiCrush parent; // Quem orquestra tudo
 		
 	private Stage          stage; // Controla e reage às entradas do usuário	
-	private ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un
+	private ScreenViewport sv;    // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un
 	private Table          table; // Grid do menu
-	private Skin           skin; // Estilo dos botões
+	private Skin           skin;  // Estilo dos botões
 	private Skin           skin2; // O que faltou no skin
 	
 	// Slider para controle de volume
