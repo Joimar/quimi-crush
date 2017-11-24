@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.quimic.game.QuimiCrush;
 import com.quimic.loader.Loader;
 import com.quimic.tile.Tile;
+import com.quimic.view.GameScreen;
 
 public class Logic {
 
@@ -91,12 +92,135 @@ public class Logic {
         //viewport.apply();
 	}
 	
+	/**
+	 * 
+	 * @param previous
+	 * @param current
+	 */
+	public void combineTile(Tile previous, Tile current) {
+		matched = false;
+		if (previous.type == GameScreen.H && current.type == GameScreen.H) {
+			// Swap Types
+            /*savedType = previous.type;
+            
+            previous.type = current.type;
+            previous.sprite = new Sprite(elementsT.get(previous.type));
+            
+            current.type = savedType;	                                    
+            current.sprite = new Sprite(elementsT.get(savedType));*/
+			current.type = GameScreen.H2;
+			current.sprite = new Sprite(elementsT.get(GameScreen.H2));		
+			matched = true;
+		} else if (previous.type == GameScreen.O && current.type == GameScreen.O) {
+			current.type = GameScreen.O2;
+			current.sprite = new Sprite(elementsT.get(GameScreen.O2));
+			matched = true;
+		} else if (previous.type == GameScreen.N && current.type == GameScreen.N) {
+			current.type = GameScreen.N2;
+			current.sprite = new Sprite(elementsT.get(GameScreen.N2));
+			matched = true;
+		} else if (previous.type == GameScreen.Na && current.type == GameScreen.Na) {
+			current.type = GameScreen.Na2;
+			current.sprite = new Sprite(elementsT.get(GameScreen.Na2));
+			matched = true;
+		} else if ((previous.type == GameScreen.H2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.H2)) {
+			matched = true;
+			current.destroy = true;
+		} else if ((previous.type == GameScreen.C && current.type == GameScreen.O2) || (previous.type == GameScreen.O2 && current.type == GameScreen.C)) {
+			matched = true;
+			current.destroy = true;
+		} else if ((previous.type == GameScreen.N2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.N2)) {
+			matched = true;
+			current.destroy = true;
+		} else if ((previous.type == GameScreen.Na2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.Na2)) {
+			matched = true;
+			current.destroy = true;
+		}
+		
+		previous.destroy = matched;		
+	}
 	
-	  public void update() {
-		  
+	/**
+	 * 
+	 */
+	public void shuffle() {
+		float width = ((Tile) gameArea.getCells().get(0).getActor()).x;
+		float height = ((Tile) gameArea.getCells().get(0).getActor()).y;
+		
+		for (int i = 0; i < sizeAreaW; i++) {
+			for (int j = 0; j < sizeAreaH; j++) {
+				if (((Tile) gameArea.getCells().get(i*j).getActor()).type >= 4) {
+					tiles[i][j] = (Tile) gameArea.getCells().get(i*j).getActor();
+					tiles[i][j].sprite = ((Tile) gameArea.getCells().get(i*j).getActor()).sprite;
+				} else { 					
+					int type = MathUtils.random(0,4);
+					Tile newTile = new Tile(new Sprite(elementsT.get(type)), type, width, height);				
+					tiles[i][j] = newTile;
+				}
+		    }
+		}
+		
+		gameArea.clear();
+		//gameArea.reset();
+		for (int i = 0; i < sizeAreaW; i++) {
+			for (int j = 0; j < sizeAreaH; j++) {
+				gameArea.add(tiles[i][j]);			            	           
+		    }
+			gameArea.row();
+		}	
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean detectShuffle() {
+		boolean canShuffle = true;
+	
+		Tile tile; 
+		for (int i = 0; i < (sizeAreaW * sizeAreaH); i++) {
+			tile = ((Tile) gameArea.getCells().get(i).getActor());
+			if (tile.type == GameScreen.H) {
+				
+			} else if (tile.type == GameScreen.H2) {
+				
+			} else if (tile.type == GameScreen.O) {
+				if ((i+1) < (sizeAreaW * sizeAreaH))
+					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O)
+						canShuffle = false;
+				if ((i-sizeAreaW) >= 0)		
+					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O)
+						canShuffle = false;				
+					
+			} else if (tile.type == GameScreen.O2) {
+				
+			} else if (tile.type == GameScreen.N) {
+				
+			} else if (tile.type == GameScreen.N2) {
+				
+			} else if (tile.type == GameScreen.Na) {
+				
+			} else if (tile.type == GameScreen.Na2) {
+				
+			} else if (tile.type == GameScreen.C) {							
+				
+			}
+		}		
+		
+		return canShuffle;
+	}
+	
+	/**
+	 * 
+	 */
+	public void update() {			
+		
 	        // Players Turn
 	        if (gameState == 0) {
-
+	        	
+	        	/*if (this.detectShuffle())
+	    			this.shuffle();*/
+	        	
 	            mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 	            camera.unproject(mouse_position);
 	            //mouse_position.x += 500;
@@ -108,27 +232,7 @@ public class Logic {
 	            //System.out.println("Mouse Position x|y    : " + mouse_position.x + " " + mouse_position.y);
 
 	            clickDelayCounter++;
-	            
-	        /*    for (int i = 0; i < gameArea.getCells().size; i++) {								
-	    			gameArea.getCells().get(i).getActor().addListener(new EventListener() {
-						@Override
-						public boolean handle(Event event) {
-							if (Gdx.input.isTouched())
-								System.out.println(((Tile)event.getListenerActor()).activated); 
-							return false;
-						}				    				
-	    			}); 			
-	    		}*/
-	            
-	            /*for (int i = 0; i < gameArea.getCells().size; i++) {								
-	    			gameArea.getCells().get(i).getActor().addListener(new ChangeListener() {			
-		    			@Override
-		    			public void changed(ChangeEvent event, Actor actor) {
-		    				System.out.println("CLIQUEI NESSA DISGRAÇA");
-		    			}
-		    		});			
-	    		}*/	            	           
-	            
+	            	      
 	            for (int i = 0; i < gameArea.getCells().size; i++) {								
 	    			gameArea.getCells().get(i).getActor().addListener(new EventListener() {
 						@Override
@@ -154,15 +258,7 @@ public class Logic {
 				                                    tileIsActive = false;
 				                                    previous.activated = false;
 
-				                                    // Swap Types
-				                                    savedType = previous.type;
-				                                    
-				                                    previous.type = current.type;
-				                                    previous.sprite = new Sprite(elementsT.get(previous.type));
-				                                    
-				                                    current.type = savedType;	                                    
-				                                    current.sprite = new Sprite(elementsT.get(savedType));
-				                                    
+				                                    combineTile(previous, current);				                                    
 				                                    
 				                                    clickDelayCounter = 0;
 				                                    if (soundEffects)
@@ -183,15 +279,7 @@ public class Logic {
 				                                    tileIsActive = false;
 				                                    previous.activated = false;
 
-				                                    // Swap Types
-				                                    savedType = previous.type;
-				                                    
-				                                    previous.type = current.type;
-				                                    previous.sprite = new Sprite(elementsT.get(previous.type));
-				                                    
-				                                    current.type = savedType;	                                    
-				                                    current.sprite = new Sprite(elementsT.get(savedType));
-				                                    
+				                                    combineTile(previous, current);	
 				                                    
 				                                    clickDelayCounter = 0;
 				                                    if (soundEffects)
@@ -212,15 +300,7 @@ public class Logic {
 				                                    tileIsActive = false;
 				                                    previous.activated = false;
 
-				                                    // Swap Types
-				                                    savedType = previous.type;
-				                                    
-				                                    previous.type = current.type;
-				                                    previous.sprite = new Sprite(elementsT.get(previous.type));
-				                                    
-				                                    current.type = savedType;	                                    
-				                                    current.sprite = new Sprite(elementsT.get(savedType));
-				                                    
+				                                    combineTile(previous, current);	
 				                                    
 				                                    clickDelayCounter = 0;
 				                                    if (soundEffects)
@@ -240,16 +320,8 @@ public class Logic {
 				                                    // De-activate
 				                                    tileIsActive = false;
 				                                    previous.activated = false;
-
-				                                    // Swap Types
-				                                    savedType = previous.type;
 				                                    
-				                                    previous.type = current.type;
-				                                    previous.sprite = new Sprite(elementsT.get(previous.type));
-				                                    
-				                                    current.type = savedType;	                                    
-				                                    current.sprite = new Sprite(elementsT.get(savedType));
-				                                    
+				                                    combineTile(previous, current);					                                    
 				                                    
 				                                    clickDelayCounter = 0;
 				                                    if (soundEffects)
@@ -320,7 +392,8 @@ public class Logic {
 
 	        // Tiles Falling
 	        if (gameState == 2) {
-	            tilesFalling();
+	          //  tilesFalling();
+	        	tilesFall();
 	        }
 
 	    }
@@ -328,14 +401,14 @@ public class Logic {
 	
 	
 	public void detectMatches() {
-	        matched = false;
+	     /*   matched = false;
 
 	        detectMatch5Hori();
 	        detectMatch5Vert();
             detectMatch4Hori();
 	        detectMatch4Vert();
 	        detectMatch3Hori();
-	        detectMatch3Vert();
+	        detectMatch3Vert();*/
 
 	        if (matched) {
 	            gameState = 2;
@@ -346,6 +419,30 @@ public class Logic {
 	        }
 	}
 	
+	public void tilesFall() {				
+		for (int i = 0; i < (sizeAreaW*sizeAreaH); i++) {
+			if (((Tile) gameArea.getCells().get(i).getActor()).destroy) {
+				int j = i;
+				while((i-sizeAreaW) >= 0) {														
+					j = i - sizeAreaW;
+					
+					((Tile) gameArea.getCells().get(i).getActor()).destroy = false;							
+					((Tile) gameArea.getCells().get(j).getActor()).destroy = true;
+					
+					((Tile) gameArea.getCells().get(i).getActor()).type = ((Tile) gameArea.getCells().get(j).getActor()).type;
+					((Tile) gameArea.getCells().get(i).getActor()).sprite = ((Tile) gameArea.getCells().get(j).getActor()).sprite;;
+					
+					i = j;
+				}				
+				((Tile) gameArea.getCells().get(i).getActor()).destroy = false;
+				int type = MathUtils.random(0,4);
+				((Tile) gameArea.getCells().get(i).getActor()).type = type;							
+				((Tile) gameArea.getCells().get(i).getActor()).sprite = new Sprite(elementsT.get(type));
+			}				
+		}	
+		matched = false;
+		gameState = PLAYER_STATE;
+	}
 	
 	public void tilesFalling() {
 

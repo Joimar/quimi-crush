@@ -68,7 +68,7 @@ public class LoadingScreen implements Screen {
 		background = atlas.findRegion("background"); // Captura o background da tela do loading
 			
 		Array<TextureRegion> dashes = addRegionsArray("bowl_", 1, 5); // Captura os sprites para mostrar o progresso do loading 				
-		animation = new Animation(0.7f, dashes, PlayMode.LOOP); // Inicio do progresso da animação		
+		animation = new Animation(0.6f, dashes, PlayMode.NORMAL); // Inicio do progresso da animação		
 				
 		parent.assetsManager.queueAddImages();
 		System.out.println("Loading images....");

@@ -35,15 +35,19 @@ import com.quimic.tile.Tile;
 public class GameScreen implements Screen {
 	private QuimiCrush parent;
 	
-	private static final int H   = 0;
-	private static final int O   = 1;
-	private static final int C   = 2;
-	private static final int N   = 3;
-	private static final int Na  = 4;
-	private static final int H2   = 5;
-	private static final int O2   = 6;
-	private static final int N2   = 7;
-	private static final int Na2  = 8;	
+	public static final int H     = 0;
+	public static final int O     = 1;
+	public static final int C     = 2;
+	public static final int N     = 3;
+	public static final int Na    = 4;
+	public static final int H2    = 5;
+	public static final int O2    = 6;
+	public static final int N2    = 7;
+	public static final int Na2   = 8;
+	public static final int H2O   = 9;	
+	public static final int CO2   = 10;	
+	public static final int N2O   = 11;
+	public static final int Na2O  = 12;	
 	
 	
 	private Stage          stage; // Controla e reage às entradas do usuário	
@@ -52,6 +56,7 @@ public class GameScreen implements Screen {
 	private OrthographicCamera cam;
 	private final int sizeMapW = 6; // Largura da matriz do jogo
 	private final int sizeMapH = 6; // Altura da matriz do jogo
+	private final int QTD_INFO = 4; // Quantidade de itens para informação/ajuda do jogo 
 	
 	Table view;
 	Table battle;
@@ -61,6 +66,7 @@ public class GameScreen implements Screen {
 	 //SpriteBatch batch;	
 		ArrayList<Texture> elementsT;	
 		Tile[][] tiles;
+		Tile[] tilesInfo;
 		
 		private TextureAtlas atlas; // Empacotamento das imagens 			
 		private AtlasRegion  background; //
@@ -73,6 +79,8 @@ public class GameScreen implements Screen {
 		private Label infoLabel;
 		Logic logic;
 		
+		public final float WIDTH_OBJECT_INFO;
+		public final float HEIGHT_OBJECT_INFO;
 		public final float WIDTH_TILE;
 		public final float HEIGHT_TILE; 
 		public final float PROPORTION_WIDTH_BATTLE  = 1f;
@@ -105,12 +113,24 @@ public class GameScreen implements Screen {
 		elementsT.add(new Texture("images/game/chemic/H2.png"));  // 5
 		elementsT.add(new Texture("images/game/chemic/O2.png"));  // 6
 		elementsT.add(new Texture("images/game/chemic/N2.png"));  // 7
-		elementsT.add(new Texture("images/game/chemic/Na2.png"));  // 8		
+		elementsT.add(new Texture("images/game/chemic/Na2.png")); // 8		
 		// Os matches (combinação completa)
-		//..
+		elementsT.add(new Texture("images/game/chemic/H2O.png"));  // 9
+		elementsT.add(new Texture("images/game/chemic/CO2.png"));  // 10
+		elementsT.add(new Texture("images/game/chemic/N2O.png"));  // 11
+		elementsT.add(new Texture("images/game/chemic/Na2O.png")); // 12
 		
-		WIDTH_TILE = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW;
+		WIDTH_TILE  = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW;
 		HEIGHT_TILE = (parent.windowHeight * PROPORTION_HEIGHT_GAME) / sizeMapH;
+		
+		WIDTH_OBJECT_INFO  = (parent.windowWidth * PROPORTION_WIDTH_INFO);
+		HEIGHT_OBJECT_INFO = (parent.windowHeight * PROPORTION_HEIGHT_INFO) / (QTD_INFO+4);
+		
+		tiles = new Tile[sizeMapW][sizeMapH];
+		tilesInfo = new Tile[QTD_INFO];
+		for (int i = 0; i < QTD_INFO; i++) {
+			tilesInfo[i] = new Tile(new Sprite(elementsT.get(H2O+i)), H2O+i, WIDTH_OBJECT_INFO*0.8f, HEIGHT_OBJECT_INFO*0.8f);
+		}
 	}
 		
 
@@ -129,9 +149,8 @@ public class GameScreen implements Screen {
 		//game.setDebug(true);
 		view   = new Table();
 		view.setFillParent(true);
-		view.setDebug(true);							
-				
-		tiles = new Tile[sizeMapW][sizeMapH];
+		view.setDebug(false);							
+							
 		for (int i = 0; i < sizeMapW; i++) {
 			for (int j = 0; j < sizeMapH; j++) {
 				int type = MathUtils.random(0,4);
@@ -179,19 +198,23 @@ public class GameScreen implements Screen {
 		view.add(battle).fillX().colspan(2);		
 		Image iYusuke = new Image(yusuke);
 		Image iHiei = new Image(hiei);
-		Image iHeart[] = new Image[6]; 
+		Image iHeart[] = new Image[10]; 
 		for (int i = 0; i < iHeart.length; i++) {
 			iHeart[i] =	new Image(heart);
 		}		
 		battle.add(iHeart[0]);
 		battle.add(iHeart[1]);
-		battle.add(iHeart[2]).padRight(50f);
+		battle.add(iHeart[2]);
 		battle.add(iHeart[3]);
-		battle.add(iHeart[4]);
+		battle.add(iHeart[4]).padRight(50f);
 		battle.add(iHeart[5]);
+		battle.add(iHeart[6]);
+		battle.add(iHeart[7]);
+		battle.add(iHeart[8]);
+		battle.add(iHeart[9]);//.padRight(50f);	
 		battle.row();
-		battle.add(iYusuke).colspan(3).padRight(50f);
-		battle.add(iHiei).colspan(3);
+		battle.add(iYusuke).colspan(5).padRight(50f);
+		battle.add(iHiei).colspan(5);
 		
 		view.row().left().bottom();
 		view.add(game);
@@ -202,10 +225,13 @@ public class GameScreen implements Screen {
 		    }
 			game.row();
 		}	
-		view.right();		
-		info.top();
-		info.add(infoLabel);
-		info.row();
+		view.right();				
+		info.add(infoLabel);				
+		for (int i = 0; i < QTD_INFO; i++) {
+			info.row().padBottom(10f);
+			info.add(tilesInfo[i]);			
+		}
+		
 		info.setSize(parent.windowWidth*PROPORTION_WIDTH_INFO, parent.windowHeight*PROPORTION_HEIGHT_INFO);
 		back.setFillParent(true);
 		//back.setScale(parent.windowWidth*PROPORTION_WIDTH_INFO, parent.windowHeight*PROPORTION_HEIGHT_INFO);
@@ -244,10 +270,11 @@ public class GameScreen implements Screen {
 		logic.update();
 		
 		for (int i = 0; i < game.getCells().size; i++) {								
-			if (((Tile) game.getCells().get(i).getActor()).activated) { 
-				game.getCells().get(i).getActor().setColor(0, 0, 0, 0.5f);					
-			}                
-			game.getCells().get(i).getActor().setColor(1f, 1f, 1f, 1f);	      			
+			if (((Tile) game.getCells().get(i).getActor()).activated)  
+				((Tile) game.getCells().get(i).getActor()).setColor(1f, 1f, 1f, 1f);
+			else 
+				((Tile) game.getCells().get(i).getActor()).setColor(0f, 0f, 0f, 0f);
+			
 		}		
 		
 		stage.act();
