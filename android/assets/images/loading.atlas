@@ -4,6 +4,34 @@ size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+attack_01
+  rotate: false
+  xy: 869, 860
+  size: 30, 43
+  orig: 30, 43
+  offset: 0, 0
+  index: -1
+attack_04
+  rotate: false
+  xy: 869, 860
+  size: 30, 43
+  orig: 30, 43
+  offset: 0, 0
+  index: -1
+attack_02
+  rotate: false
+  xy: 935, 981
+  size: 28, 42
+  orig: 28, 42
+  offset: 0, 0
+  index: -1
+attack_03
+  rotate: false
+  xy: 203, 55
+  size: 98, 46
+  orig: 98, 46
+  offset: 0, 0
+  index: -1
 background
   rotate: false
   xy: 1, 223
@@ -48,6 +76,13 @@ bowl_05
   index: -1
 heart
   rotate: false
+  xy: 21, 1
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+heart-bg
+  rotate: false
   xy: 1, 1
   size: 18, 18
   orig: 18, 18
@@ -55,7 +90,7 @@ heart
   index: -1
 hiei_1
   rotate: false
-  xy: 203, 48
+  xy: 803, 730
   size: 34, 53
   orig: 34, 53
   offset: 0, 0
@@ -65,13 +100,6 @@ logo
   xy: 1, 21
   size: 200, 200
   orig: 200, 200
-  offset: 0, 0
-  index: -1
-yusuke_1
-  rotate: false
-  xy: 803, 740
-  size: 30, 43
-  orig: 30, 43
   offset: 0, 0
   index: -1
 

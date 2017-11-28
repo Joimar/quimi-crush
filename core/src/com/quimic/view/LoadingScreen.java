@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.quimic.animation.LoadingBarPart;
 import com.quimic.game.QuimiCrush;
-import com.quimic.logic.LoadingBarPart;
 
 public class LoadingScreen implements Screen {
 	public final int IMAGE = 0; // Identificação para o carregamento de imagens
@@ -31,7 +30,7 @@ public class LoadingScreen implements Screen {
 //*************************************************************//	
 	private QuimiCrush parent; // Quem orquestra tudo
 	private int        currentLoadingStage = 0; // Estado inicial de carregamento	
-	private float      countDown           = 3f; // Tempo, em segundos, para se manter na tela de loading após carregar tudo	
+	private float      countDown           = 2.5f; // Tempo, em segundos, para se manter na tela de loading após carregar tudo	
 	private Animation  animation; // Animação de progresso do loading 
 	
 //*************************************************************//
@@ -39,13 +38,17 @@ public class LoadingScreen implements Screen {
 	private AtlasRegion  title; //
 	//private AtlasRegion  dash; // 	
 	private AtlasRegion  background; //
+	
 //*************************************************************//	
 	Stage stage;
 	Table table;
 	Table loadingTable;	
 
-//*************************************************************//	
-	
+//*************************************************************//		
+	/**
+	 * 
+	 * @param parent
+	 */
 	public LoadingScreen(QuimiCrush parent) {		
 		this.parent = parent;
 		stage = new Stage(new ScreenViewport());
@@ -67,7 +70,7 @@ public class LoadingScreen implements Screen {
 		//dash = atlas.findRegion("loading-dash");								
 		background = atlas.findRegion("background"); // Captura o background da tela do loading
 			
-		Array<TextureRegion> dashes = addRegionsArray("bowl_", 1, 5); // Captura os sprites para mostrar o progresso do loading 				
+		Array<TextureRegion> dashes = this.addRegionsArray("bowl_", 1, 5); // Captura os sprites para mostrar o progresso do loading 				
 		animation = new Animation(0.6f, dashes, PlayMode.NORMAL); // Inicio do progresso da animação		
 				
 		parent.assetsManager.queueAddImages();

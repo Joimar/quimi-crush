@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.quimic.logic;
+package com.quimic.animation;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;

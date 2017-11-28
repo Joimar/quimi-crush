@@ -25,16 +25,18 @@ import com.quimic.view.GameScreen;
 
 public class Logic {
 
-	private final int PLAYER_STATE = 0;
-	private final int MATCH_STATE  = 1;	
-	private final int FALL_STATE   = 2;
+	public final int IDLE_STATE   = -1;
+	public final int PLAYER_STATE = 0;
+	public final int MATCH_STATE  = 1;	
+	public final int FALL_STATE   = 2;
 	
 	public boolean matched = false;
+	public boolean combined = false;
 	public int savedType = 0;
 	
 	public Loader assetsManager;
-	public Sound combine;
-	public Sound match;
+	public Sound combineSound;
+	public Sound matchSound;
 	
 	//
 	public int windowWidth = Gdx.graphics.getWidth();
@@ -48,7 +50,8 @@ public class Logic {
     public int activeY = 0;
     public int activeXY = 0;
     
-	public int gameState = 1;	
+	public int gameState = PLAYER_STATE;
+	public int heroState = GameScreen.HERO_IDLE; 
 	public Tile[][] tiles;
 	
 	public Vector3 mouse_position = new Vector3(0,0,0);
@@ -72,11 +75,11 @@ public class Logic {
 		// tells the asset manager to load the sound and wait until finsihed loading.
 		assetsManager.finishLoading();
 		// loads the 2 sounds we use
-		combine = assetsManager.MANAGER.get(assetsManager.COMBINE_SOUND, Sound.class);
-		match = assetsManager.MANAGER.get(assetsManager.MATCH_SOUND, Sound.class);				
+		combineSound = assetsManager.MANAGER.get(assetsManager.COMBINE_SOUND, Sound.class);
+		matchSound = assetsManager.MANAGER.get(assetsManager.MATCH_SOUND, Sound.class);				
 		
-		match.setVolume(0, parent.savePreferences.getSoundVolume());
-		combine.setVolume(0, parent.savePreferences.getSoundVolume());
+		matchSound.setVolume(0, parent.savePreferences.getSoundVolume());
+		combineSound.setVolume(0, parent.savePreferences.getSoundVolume());
 		soundEffects = parent.savePreferences.isSoundEffectsEnabled();
 		
 		this.tiles = tiles;
@@ -97,32 +100,25 @@ public class Logic {
 	 * @param previous
 	 * @param current
 	 */
-	public void combineTile(Tile previous, Tile current) {
+	private void combineTile(Tile previous, Tile current) {
 		matched = false;
+		combined = false;
 		if (previous.type == GameScreen.H && current.type == GameScreen.H) {
-			// Swap Types
-            /*savedType = previous.type;
-            
-            previous.type = current.type;
-            previous.sprite = new Sprite(elementsT.get(previous.type));
-            
-            current.type = savedType;	                                    
-            current.sprite = new Sprite(elementsT.get(savedType));*/
 			current.type = GameScreen.H2;
 			current.sprite = new Sprite(elementsT.get(GameScreen.H2));		
-			matched = true;
+			combined = true;
 		} else if (previous.type == GameScreen.O && current.type == GameScreen.O) {
 			current.type = GameScreen.O2;
 			current.sprite = new Sprite(elementsT.get(GameScreen.O2));
-			matched = true;
+			combined = true;
 		} else if (previous.type == GameScreen.N && current.type == GameScreen.N) {
 			current.type = GameScreen.N2;
 			current.sprite = new Sprite(elementsT.get(GameScreen.N2));
-			matched = true;
+			combined = true;
 		} else if (previous.type == GameScreen.Na && current.type == GameScreen.Na) {
 			current.type = GameScreen.Na2;
 			current.sprite = new Sprite(elementsT.get(GameScreen.Na2));
-			matched = true;
+			combined = true;
 		} else if ((previous.type == GameScreen.H2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.H2)) {
 			matched = true;
 			current.destroy = true;
@@ -137,37 +133,39 @@ public class Logic {
 			current.destroy = true;
 		}
 		
-		previous.destroy = matched;		
-	}
-	
-	/**
-	 * 
-	 */
-	public void shuffle() {
-		float width = ((Tile) gameArea.getCells().get(0).getActor()).x;
-		float height = ((Tile) gameArea.getCells().get(0).getActor()).y;
-		
-		for (int i = 0; i < sizeAreaW; i++) {
-			for (int j = 0; j < sizeAreaH; j++) {
-				if (((Tile) gameArea.getCells().get(i*j).getActor()).type >= 4) {
-					tiles[i][j] = (Tile) gameArea.getCells().get(i*j).getActor();
-					tiles[i][j].sprite = ((Tile) gameArea.getCells().get(i*j).getActor()).sprite;
-				} else { 					
-					int type = MathUtils.random(0,4);
-					Tile newTile = new Tile(new Sprite(elementsT.get(type)), type, width, height);				
-					tiles[i][j] = newTile;
-				}
-		    }
+		if (matched) {
+			if (soundEffects)
+            	matchSound.play();
+		} else {
+			if (combined)
+            	combineSound.play();		
 		}
 		
-		gameArea.clear();
-		//gameArea.reset();
-		for (int i = 0; i < sizeAreaW; i++) {
-			for (int j = 0; j < sizeAreaH; j++) {
-				gameArea.add(tiles[i][j]);			            	           
-		    }
-			gameArea.row();
-		}	
+		previous.destroy = matched || combined;		
+	}
+
+	/**
+	 * 
+	 * @param fully
+	 */
+	public void shuffle(boolean fully) {				
+		for (int i = 0; i < (sizeAreaW * sizeAreaH); i++) {			
+			if (!fully) {
+				if ( ((Tile) gameArea.getCells().get(i).getActor()).type <= 4) {
+					int type = MathUtils.random(0,4);
+					((Tile) gameArea.getCells().get(i).getActor()).sprite = new Sprite(elementsT.get(type));
+					((Tile) gameArea.getCells().get(i).getActor()).type = type;
+				}
+			} else {
+				int type = MathUtils.random(0,4);
+				((Tile) gameArea.getCells().get(i).getActor()).sprite = new Sprite(elementsT.get(type));
+				((Tile) gameArea.getCells().get(i).getActor()).type = type;
+			}		    
+		}
+		
+		int count = 5;
+		while(count-- > 0 && this.detectShuffle())
+			this.shuffle(true);		
 	}
 	
 	/**
@@ -180,32 +178,74 @@ public class Logic {
 		Tile tile; 
 		for (int i = 0; i < (sizeAreaW * sizeAreaH); i++) {
 			tile = ((Tile) gameArea.getCells().get(i).getActor());
-			if (tile.type == GameScreen.H) {
-				
-			} else if (tile.type == GameScreen.H2) {
-				
-			} else if (tile.type == GameScreen.O) {
-				if ((i+1) < (sizeAreaW * sizeAreaH))
-					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O)
+			switch (tile.type) {
+			case GameScreen.H:							 	
+			case GameScreen.O:		
+			case GameScreen.N:							 
+			case GameScreen.Na:							 
+				if ( (i % sizeAreaW) != 0 ) { // Esquerda
+					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == tile.type)
 						canShuffle = false;
-				if ((i-sizeAreaW) >= 0)		
+				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == tile.type)
+						canShuffle = false;		
+				} if ( (i - sizeAreaW) >= 0 ) { // Cima
+					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == tile.type)
+						canShuffle = false;
+				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == tile.type)
+						canShuffle = false;
+				}
+				break;
+			case GameScreen.H2:					
+			case GameScreen.N2:							 
+			case GameScreen.Na2:							 
+				if ( (i % sizeAreaW) != 0 ) { // Esquerda
+					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.O)
+						canShuffle = false;
+				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O)
+						canShuffle = false;		
+				} if ( (i - sizeAreaW) >= 0 ) { // Cima
 					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O)
-						canShuffle = false;				
-					
-			} else if (tile.type == GameScreen.O2) {
-				
-			} else if (tile.type == GameScreen.N) {
-				
-			} else if (tile.type == GameScreen.N2) {
-				
-			} else if (tile.type == GameScreen.Na) {
-				
-			} else if (tile.type == GameScreen.Na2) {
-				
-			} else if (tile.type == GameScreen.C) {							
-				
+						canShuffle = false;
+				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.O)
+						canShuffle = false;
+				}
+				break;
+			case GameScreen.O2:	
+				if ( (i % sizeAreaW) != 0 ) { // Esquerda
+					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.C)
+						canShuffle = false;
+				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.C)
+						canShuffle = false;		
+				} if ( (i - sizeAreaW) >= 0 ) { // Cima
+					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.C)
+						canShuffle = false;
+				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.C)
+						canShuffle = false;
+				}
+				break;
+			case GameScreen.C:			
+				if ( (i % sizeAreaW) != 0 ) { // Esquerda
+					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.O2)
+						canShuffle = false;
+				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O2)
+						canShuffle = false;		
+				} if ( (i - sizeAreaW) >= 0 ) { // Cima
+					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O2)
+						canShuffle = false;
+				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.O2)
+						canShuffle = false;
+				}
+				break;
 			}
-		}		
+		}
 		
 		return canShuffle;
 	}
@@ -213,13 +253,14 @@ public class Logic {
 	/**
 	 * 
 	 */
-	public void update() {			
-		
+	public void update() {					
 	        // Players Turn
-	        if (gameState == 0) {
+	        if (gameState == PLAYER_STATE) {
 	        	
-	        	/*if (this.detectShuffle())
-	    			this.shuffle();*/
+	        	if (this.detectShuffle()) {
+	        		System.out.println("Bagunça isso!");
+	        		this.shuffle(false);	
+	        	}
 	        	
 	            mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 	            camera.unproject(mouse_position);
@@ -250,7 +291,7 @@ public class Logic {
 				                    // Check tile to left side
 				                    if (tileIsActive) {				                    	
 				                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
-				                    	if ((activeXY - 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) {
+				                    	if ( (activeXY % sizeAreaW) != 0 &&  ((activeXY - 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) ) {
 				                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
 				                            	// Verica se está a esquerda
 				                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
@@ -260,9 +301,7 @@ public class Logic {
 
 				                                    combineTile(previous, current);				                                    
 				                                    
-				                                    clickDelayCounter = 0;
-				                                    if (soundEffects)
-				                                    	combine.play();
+				                                    clickDelayCounter = 0;				                                    
 
 				                               // }
 				                            }
@@ -271,7 +310,7 @@ public class Logic {
 				                    // Check tile to right side
 				                    if (tileIsActive) {				                    	
 				                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
-				                    	if ((activeXY + 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) {
+				                    	if ( ((activeXY+1) % sizeAreaW) != 0 && ((activeXY + 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) ) {
 				                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
 				                            	// Verica se está a esquerda
 				                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
@@ -282,9 +321,6 @@ public class Logic {
 				                                    combineTile(previous, current);	
 				                                    
 				                                    clickDelayCounter = 0;
-				                                    if (soundEffects)
-				                                    	combine.play();
-
 				                               // }
 				                            }
 				                        }
@@ -303,9 +339,6 @@ public class Logic {
 				                                    combineTile(previous, current);	
 				                                    
 				                                    clickDelayCounter = 0;
-				                                    if (soundEffects)
-				                                    	combine.play();
-
 				                               // }
 				                            }
 				                        }
@@ -324,16 +357,13 @@ public class Logic {
 				                                    combineTile(previous, current);					                                    
 				                                    
 				                                    clickDelayCounter = 0;
-				                                    if (soundEffects)
-				                                    	combine.play();
-
 				                               // }
 				                            }
 				                        }
 				                    }
 
 				                    // Check for Matches
-				                    gameState = 1;
+				                    gameState = MATCH_STATE;
 
 				                }
 				            }
@@ -386,36 +416,39 @@ public class Logic {
 	        }
 
 	        // Detect Matches
-	        if (gameState == 1) {
+	        if (gameState == MATCH_STATE) {
 	            detectMatches();
 	        }
 
 	        // Tiles Falling
-	        if (gameState == 2) {
+	        if (gameState == FALL_STATE) {
 	          //  tilesFalling();
 	        	tilesFall();
+	        	if (matched) { /** trava de alguma forma **/
+	        		gameState = IDLE_STATE;		        	
+		    		heroState = GameScreen.HERO_ATTACK;
+	        	} else { //combined	        		
+	        		gameState = PLAYER_STATE;
+	        		heroState = GameScreen.HERO_IDLE;
+	        	}
+	        	matched = false;
+	        	combined = false;	    		
 	        }
-
+			
+	        System.out.println("GAME STATE: "+gameState+"\n");
 	    }
-
 	
-	
+	/**
+	 * 
+	 */
 	public void detectMatches() {
-	     /*   matched = false;
 
-	        detectMatch5Hori();
-	        detectMatch5Vert();
-            detectMatch4Hori();
-	        detectMatch4Vert();
-	        detectMatch3Hori();
-	        detectMatch3Vert();*/
-
-	        if (matched) {
-	            gameState = 2;
+	        if (matched || combined) {
+	            gameState = FALL_STATE;
 	        }
 	        else {
 	            // Player Turn
-	            gameState = 0;
+	            gameState = PLAYER_STATE;
 	        }
 	}
 	
@@ -439,11 +472,12 @@ public class Logic {
 				((Tile) gameArea.getCells().get(i).getActor()).type = type;							
 				((Tile) gameArea.getCells().get(i).getActor()).sprite = new Sprite(elementsT.get(type));
 			}				
-		}	
-		matched = false;
-		gameState = PLAYER_STATE;
+		}			
 	}
+
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 	public void tilesFalling() {
 
         boolean repeat = false;
@@ -497,8 +531,6 @@ public class Logic {
         System.out.println("Completed Tiles Falling!");
 
     }
-
-	
 	
 	public void detectMatch3Hori() {
 		        for (int i = 0; i < tiles.length; i++) {
@@ -511,8 +543,7 @@ public class Logic {
 		                            }
 		                            System.out.println("Match 3 Horizontal at " + i + " " + j);
 	                        matched = true;
-	                        if (soundEffects)
-	                        	match.play();
+	                        
 	                    }
 	                }
 	            }
@@ -614,7 +645,5 @@ public class Logic {
 	        }
 	    }
 	}
-
-
- 
+*/ 
 }

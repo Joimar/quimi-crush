@@ -26,8 +26,8 @@ public class QuimiCrush extends Game {
 	private GameScreen        game;	
 	
 //*************************************************************//		
-	public float           windowWidth;
-    public float           windowHeight;        
+	public int             windowWidth;
+    public int             windowHeight;        
     public SavePreferences savePreferences;
     public Loader          assetsManager;
     public Music           playingSong;
@@ -86,6 +86,13 @@ public class QuimiCrush extends Game {
 		this.setScreen(loading);
 	}
 	
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
+		windowWidth  = width;//Gdx.graphics.getWidth(); // Largura da tela do jogo
+	    windowHeight = height;//Gdx.graphics.getHeight(); // Altura da tela do jogo	    
+	}
+
 	@Override
 	public void dispose () {
 		playingSong.dispose();
