@@ -3,6 +3,7 @@ package com.quimic.view;
 import java.util.ArrayList;
 
 import javax.print.attribute.standard.Finishings;
+import javax.xml.stream.events.EndElement;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -59,8 +60,18 @@ public class GameScreen implements Screen {
 //*************************************************************//
 	public static final int HERO_IDLE   = 0;
 	public static final int HERO_ATTACK = 1;
-	public static final int HERO_DAMAGE = 2;
-	public static final int HERO_DIE    = 3;
+	public static final int HERO_HEAL   = 2;
+	public static final int HERO_DAMAGE = 3;
+	public static final int HERO_DIE    = 4;	
+	
+	public static final int ENEMY_IDLE   = 6;
+	public static final int ENEMY_ATTACK = 7;
+	public static final int ENEMY_HEAL   = 8;
+	public static final int ENEMY_DAMAGE = 9;
+	public static final int ENEMY_DIE    = 10;
+	
+	public static final int GAME_IDLE     = 20;
+	public static final int GAME_CONTINUE = 21;	
 	
 //*************************************************************//	
 	public final float PROPORTION_WIDTH_BATTLE  = 1f;
@@ -73,6 +84,9 @@ public class GameScreen implements Screen {
 	private final int sizeMapW = 6; // Largura da matriz do jogo
 	private final int sizeMapH = 6; // Altura da matriz do jogo
 	private final int QTD_INFO = 4; // Quantidade de itens para informação/ajuda do jogo
+	
+	private final int LIFE_HERO  = 10;
+	private final int LIFE_ENEMY = 5;
 
 //*************************************************************//		
 	private Stage          stage; // Controla e reage às entradas do usuário	
@@ -102,22 +116,39 @@ public class GameScreen implements Screen {
 	private AtlasRegion  background; //
 	private AtlasRegion  fieldBattle; //
 	
-	private AtlasRegion  hiei; //
-	private AtlasRegion  yusuke; //
-	private AtlasRegion  heart; //		
+	private AtlasRegion  hero_idle; //
+	private AtlasRegion  enemy_idle; //
+	private AtlasRegion  hero_die; //
+	private AtlasRegion  enemy_die; //
+	private AtlasRegion  heart; //
+	private AtlasRegion  nonHeart; //		
 	
-	Animation       heroIdleAnimation;	
+	//Animation       heroIdleAnimation;	
 	Animation       heroAttackAnimation;
+	//Animation       heroHealAnimation;
 	Animation       heroDamageAnimation;
 	Animation       heroDieAnimation;
+	
+	//Animation       enemyIdleAnimation;	
+	Animation       enemyAttackAnimation;
+	//Animation       enemyHealAnimation;
+	Animation       enemyDamageAnimation;
+	Animation       enemyDieAnimation;
 	
 	/*TextureRegion[] HeroAttackRegions;	
 	TextureRegion[] HeroDamageRegions;
 	TextureRegion[] HeroDieRegions;*/
 	
-	HeroAnimation heroAnimation;
-	//SpriteBatch batch;
+	//HeroAnimation heroAnimation;
+	boolean heroAnimationFinish  = true;
+	boolean enemyAnimationFinish = true;
+	int lifeHero;
+	int lifeEnemy;	
+	SpriteBatch batch;
+	public float stateTime;
 	
+	int battleState = GAME_CONTINUE;
+
 	TextButton back;
 	
 //*************************************************************//		    
@@ -171,19 +202,36 @@ public class GameScreen implements Screen {
 	/**
 	 * 
 	 */
-	private void loadAnimations() {		
-		hiei = atlas.findRegion("hiei_1"); // Captura o background da tela do loading
-		yusuke = atlas.findRegion("attack_01"); // Captura o background da tela do loading
-		heart = atlas.findRegion("heart"); // Captura o background da tela do loading
+	private void loadAnimations() {					
+		heart      = atlas.findRegion("heart"); // Captura o background da tela do loading
+		nonHeart   = atlas.findRegion("heart-bg"); // Captura o background da tela do loading
 				
 		Array<TextureRegion> regionsT;
-		regionsT = this.addRegionsArray("attack_", 1, 1);
-		heroIdleAnimation = new Animation(1f, regionsT, PlayMode.NORMAL);
+		// Animações do hero		
+		hero_idle = atlas.findRegion("hero_idle"); // Herói parado 
+		// ...
 		regionsT = this.addRegionsArray("attack_", 1, 4);
-		heroAttackAnimation = new Animation(0.5f, regionsT, PlayMode.NORMAL);
+		heroAttackAnimation = new Animation(0.4f, regionsT, PlayMode.NORMAL); // Atack do herói
+		// ..
+		regionsT = this.addRegionsArray("damage1_", 1, 2);
+		heroDamageAnimation = new Animation(0.5f, regionsT, PlayMode.NORMAL); // Dano no herói
+		// ...
+		regionsT = this.addRegionsArray("die_", 1, 3);
+		heroDieAnimation = new Animation(0.7f, regionsT, PlayMode.NORMAL); // Herói morto
+		hero_die = atlas.findRegion("hero_die");                           // Herói caido
 		
-		heroAnimation = new HeroAnimation(heroIdleAnimation);
-		heroAnimation.finish = true;		
+		// Animações do enemy		
+		enemy_idle = atlas.findRegion("enemy1_idle"); // Inimigo parado
+		// ...
+		regionsT = this.addRegionsArray("enemy1_attack1_",1, 5);
+		enemyAttackAnimation = new Animation(0.4f, regionsT, PlayMode.NORMAL); // Atack inimigo
+		// ..
+		regionsT = this.addRegionsArray("enemy1_damage1_", 1, 3);
+		enemyDamageAnimation = new Animation(0.5f, regionsT, PlayMode.NORMAL); // Dano no inimigo
+		// ...
+		regionsT = this.addRegionsArray("enemy1_die_", 1, 3);
+		enemyDieAnimation = new Animation(0.7f, regionsT, PlayMode.NORMAL);	// Inimigo morto	
+		enemy_die = atlas.findRegion("enemy_die");                          // Inimigo caido
 	}
 	
 	/**
@@ -207,22 +255,32 @@ public class GameScreen implements Screen {
 		return array;
 	}
 
+	/**
+	 * 
+	 * @param on
+	 */
+	private void DebugOnOf(boolean on) {
+		battle.setDebug(on);
+		view.setDebug(on);
+		info.setDebug(on);
+		//game.setDebug(on);
+	}
+			
 	@Override
 	public void show() {		
-		//batch = new SpriteBatch();
+		batch = new SpriteBatch();
+		stateTime = 0;
 		
 		stage.clear();
 		Gdx.input.setInputProcessor(stage);
 		
-		battle = new Table();
-		battle.setDebug(true);
+		battle = new Table();		
 		info   = new Table();
 		//info.setDebug(true);
 		game   = new Table();				
 		//game.setDebug(true);
 		view   = new Table();
-		view.setFillParent(true);
-		view.setDebug(true);							
+		view.setFillParent(true);						
 							
 		for (int i = 0; i < sizeMapW; i++) {
 			for (int j = 0; j < sizeMapH; j++) {
@@ -240,58 +298,37 @@ public class GameScreen implements Screen {
 		Skin skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
 								
 		back = new TextButton("<", skin);							
-				
-		/*view.setSize(parent.windowWidth, parent.windowHeight);
-		view.setPosition(0, 0);*/
-		
-		/*battle.setSize(parent.windowWidth, parent.windowHeight*0.4f);
-		battle.setPosition(0, 0);*/
-		
-		//game.setSize(parent.windowWidth*PROPORTION_WIDTH_GAME, parent.windowHeight*PROPORTION_WIDTH_GAME);				
-		
-		/*info.setSize(parent.windowWidth*0.2f, parent.windowHeight*0.6f);
-		info.setPosition(0, parent.windowHeight);*/
-		
-		//info.setPosition(0, 0);		
+							
 		background = atlas.findRegion("background"); // Captura o background da tela do loading	
 		fieldBattle = atlas.findRegion("fieldBattle"); // Captura o background da tela do loading		
 		
 		infoLabel       = new Label("?", skin, "title");	
 				
 		view.top();
-		view.add(battle).expandX().colspan(2);	
-		Image iYusuke = new Image(yusuke);
-		Image iHiei = new Image(hiei);
-		Image iHeart[] = new Image[10]; 
-		for (int i = 0; i < iHeart.length; i++) {
-			iHeart[i] =	new Image(heart);
-		}	
-		battle.bottom().padBottom(20);
-		battle.add(iHeart[0]);
-		battle.add(iHeart[1]);
-		battle.add(iHeart[2]);
-		battle.add(iHeart[3]);
-		battle.add(iHeart[4]).padRight(50f);
-		battle.add(iHeart[5]);
-		battle.add(iHeart[6]);
-		battle.add(iHeart[7]);
-		battle.add(iHeart[8]);
-		battle.add(iHeart[9]);//.padRight(50f);	
-		battle.row().bottom();
-		battle.add(heroAnimation).colspan(5).padRight(50f);		
-		battle.add(iHiei).colspan(5);
-		
+		view.add(battle).expandX().colspan(2);
 		view.row().left().bottom();
 		view.add(game);
+		view.right();				
+		info.add(infoLabel);	
+		
+		// BATTLE
+		lifeHero  = LIFE_HERO;
+		lifeEnemy = LIFE_ENEMY;
+		
+		battle.bottom().padBottom(20);
+		battle.row().bottom();
+		battle.add().colspan(5).padRight(100f);		
+		battle.add().colspan(5);			
 				
+		// GAME
 		for (int i = 0; i < sizeMapW; i++) {
 			for (int j = 0; j < sizeMapH; j++) {
 				game.add(tiles[i][j]);					            	           
 		    }
 			game.row();
 		}	
-		view.right();				
-		info.add(infoLabel);				
+		
+		// INFO
 		for (int i = 0; i < QTD_INFO; i++) {
 			info.row().padBottom(10f);
 			info.add(tilesInfo[i]);			
@@ -317,7 +354,11 @@ public class GameScreen implements Screen {
 			public void changed(ChangeEvent event, Actor actor) {
 				parent.changeScreen(QuimiCrush.MAIN);
 			}
-		});			
+		});	
+		
+		
+		// Ativando debug das tables (...)
+		this.DebugOnOf(true);
 	}
 	
 	@Override
@@ -327,36 +368,6 @@ public class GameScreen implements Screen {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);									
 		
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-		/**
-		* 
-		* 
-		* PAREI AQUI TENTANDO COLOCAR YUSUKE PARA MEXER
-		* 
-		* 
-		*/								
-		if (logic.heroState == HERO_IDLE)
-			heroAnimation.finish = true;				
-		else
-			heroAnimation.finish = heroAnimation.finished();
-		
-		System.out.println("HERO STATE: "+logic.heroState);
-		System.out.println("FINISH: "+heroAnimation.finish);		
-		
-		if (heroAnimation.finish && logic.heroState != HERO_IDLE) {
-			logic.gameState = logic.PLAYER_STATE;			
-			logic.heroState = HERO_IDLE;
-		}								
-		
-		if (heroAnimation.finish) {
-			if (logic.heroState == HERO_IDLE) {				
-				heroAnimation = new HeroAnimation(heroIdleAnimation);				
-			} else if (logic.heroState == HERO_ATTACK) {
-				heroAnimation = new HeroAnimation(heroAttackAnimation);				
-			}
-		}
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-		
 		logic.update();
 		
 		for (int i = 0; i < game.getCells().size; i++) {								
@@ -364,40 +375,169 @@ public class GameScreen implements Screen {
 				((Tile) game.getCells().get(i).getActor()).setDebug(true);
 			else 
 				((Tile) game.getCells().get(i).getActor()).setDebug(false);			
-		}		
+		}												
 		
 		stage.act();
 		stage.draw();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+		stateTime += delta;
+		
+		if (logic.logicBattleState == GAME_IDLE) {
+			battleState = HERO_ATTACK;
+			heroAnimationFinish = false;
+			enemyAnimationFinish = true;			
+			logic.logicBattleState = GAME_CONTINUE;
+			stateTime = 0;
+		} else if (logic.logicBattleState == ENEMY_ATTACK) {
+			battleState = ENEMY_ATTACK;
+			heroAnimationFinish = true;
+			enemyAnimationFinish = false;			
+			logic.logicBattleState = GAME_CONTINUE;
+			stateTime = 0;
+		}
+				
+		batch.begin();
+		System.out.println("GAMESTATE: "+battleState);
+		this.drawHero();
+		System.out.println("GAMESTATE_HERO: "+battleState);
+		this.drawEnemy();
+		System.out.println("GAMESTATE_ENEMY: "+battleState+"\n");
+		batch.end();		
+		
+		if (battleState == GAME_CONTINUE)
+			logic.gameState = logic.PLAYER_STATE;			
+//////////////////////////////////////////////////////////////////////////////////////////////////////					
+				
+	}
+	
+	/**
+	 * 
+	 */
+	private void drawHero() {		
+		float x = battle.getCells().get(battle.getCells().size-2).getActorX();
+		float y = battle.getCells().get(battle.getCells().size-2).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);				
+		
+		//float xHeart = x - heart.getRegionWidth(); 
+		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-2).getActorHeight();   
+		
+		if (heroAnimationFinish) { // hero.idle
+			if (lifeHero <= 0)
+				batch.draw(hero_die, x, y);
+			else
+				batch.draw(hero_idle, x, y);			
+			
+		} else if (battleState == HERO_ATTACK) { // ATACK
+			heroAnimationFinish = false;
+			if (! heroAttackAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
+				batch.draw((TextureRegion) heroAttackAnimation.getKeyFrame(stateTime, true), x, y);										
+			} else { // Animação herói terminou
+				batch.draw((TextureRegion) heroAttackAnimation.getKeyFrame(0, true), x, y);
+				battleState = ENEMY_DAMAGE;				
+				heroAnimationFinish = true;
+				enemyAnimationFinish = false;
+				stateTime = 0;
+			}
+			
+		} else if (battleState == HERO_DAMAGE) { // DAMAGE
+			if (! heroDamageAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
+				batch.draw((TextureRegion) heroDamageAnimation.getKeyFrame(stateTime, true), x, y);				
+			} else { // Animação herói terminou
+				// Reduz uma vida do herói 
+				if (--lifeHero <= 0) {
+					battleState = HERO_DIE;
+					heroAnimationFinish = false;
+				} else {
+					battleState = GAME_CONTINUE;
+					heroAnimationFinish = true;
+				}							
+				enemyAnimationFinish = true;
+				stateTime = 0;
+			}	
+			
+		} else if (battleState == HERO_DIE) { // DIE
+			if (! heroDieAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
+				batch.draw((TextureRegion) heroDieAnimation.getKeyFrame(stateTime, true), x, y);				
+			} else { 				
+				battleState = GAME_CONTINUE;								
+				heroAnimationFinish = true;
+				enemyAnimationFinish = true;
+				stateTime = 0;
+			}
+		}
+		
+		// Desenhar a vida do herói
+		for (int heartFill = 0; heartFill < lifeHero; heartFill++) { // Desenha os corações cheios
+			batch.draw(heart, x - heartFill*heart.getRegionWidth(), yHeart);
+		}
+		for (int heartNFill = LIFE_HERO; heartNFill > lifeHero && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
+			batch.draw(nonHeart, x - (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void drawEnemy() {
+		float x = battle.getCells().get(battle.getCells().size-1).getActorX();
+		float y = battle.getCells().get(battle.getCells().size-1).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);
+
+		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-1).getActorHeight();
+		
+		if (enemyAnimationFinish) { // enemy.idle
+			if (lifeEnemy <= 0)
+				batch.draw(enemy_die, x, y);
+			else
+				batch.draw(enemy_idle, x, y);			
+			
+		} else if (battleState == ENEMY_ATTACK) { // ATTACK						
+			if (! enemyAttackAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
+				batch.draw((TextureRegion) enemyAttackAnimation.getKeyFrame(stateTime, true), x, y);								
+			} else { 				
+				battleState = HERO_DAMAGE;								
+				heroAnimationFinish = false;
+				enemyAnimationFinish = true;
+				stateTime = 0;
+			}
+			
+		} else if (battleState == ENEMY_DAMAGE) { // DAMAGE			
+			if (! enemyDamageAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
+				batch.draw((TextureRegion) enemyDamageAnimation.getKeyFrame(stateTime, true), x, y);				
+			} else { // Animação inimigo terminou
+				// Reduz uma vida do inimigo 
+				if (--lifeEnemy <= 0) {
+					battleState = ENEMY_DIE;
+					enemyAnimationFinish = false;					
+				} else {
+					battleState = GAME_CONTINUE;
+					enemyAnimationFinish = true;
+				}
+				heroAnimationFinish = true;				
+				stateTime = 0;								
+			}
+			
+		} else if (battleState == ENEMY_DIE) { // DIE
+			if (! enemyDieAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
+				batch.draw((TextureRegion) enemyDieAnimation.getKeyFrame(stateTime, true), x, y);				
+			} else { 				
+				battleState = GAME_CONTINUE;								
+				heroAnimationFinish = true;
+				enemyAnimationFinish = true;
+				stateTime = 0;
+			}
+		}
+		
+		// Desenhar a vida do inimigo
+		for (int heartFill = 0; heartFill < lifeEnemy; heartFill++) { // Desenha os corações cheios
+			batch.draw(heart, x + heartFill*heart.getRegionWidth(), yHeart);
+		}
+		for (int heartNFill = LIFE_ENEMY; heartNFill > lifeEnemy && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
+			batch.draw(nonHeart, x-1 + (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
+		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		/*System.out.println(parent.windowWidth+" : "+parent.windowHeight);
-		System.out.println(width+" : "+height);
-		
-		battle.setSize(parent.windowWidth*PROPORTION_WIDTH_BATTLE, parent.windowHeight*PROPORTION_HEIGHT_BATTLE);
-		game.setSize(parent.windowWidth*PROPORTION_WIDTH_GAME, parent.windowHeight*PROPORTION_HEIGHT_GAME);
-		info.setSize(parent.windowWidth*PROPORTION_WIDTH_INFO, parent.windowHeight*PROPORTION_HEIGHT_INFO);	
-		view.setSize(width, height);
-		
-		WIDTH_TILE  = (width * PROPORTION_WIDTH_GAME) / sizeMapW;
-		HEIGHT_TILE = (height * PROPORTION_HEIGHT_GAME) / sizeMapH;
-		
-		WIDTH_OBJECT_INFO  = (width * PROPORTION_WIDTH_INFO);
-		HEIGHT_OBJECT_INFO = (height * PROPORTION_HEIGHT_INFO) / (QTD_INFO+4);
-		
-		tiles = new Tile[sizeMapW][sizeMapH];
-		tilesInfo = new Tile[QTD_INFO];
-		for (int i = 0; i < QTD_INFO; i++) {
-			info.getCells().get(i).getActor().setSize(WIDTH_OBJECT_INFO*0.8f, HEIGHT_OBJECT_INFO*0.8f);			
-		}
-		
-		for (int i = 0; i < (sizeMapW*sizeMapH); i++) {
-			game.getCells().get(i).getActor().setSize(WIDTH_TILE, HEIGHT_TILE);			
-		}	
-		
-		stage.act();
-		stage.draw();*/
 	}
 
 	@Override
@@ -420,8 +560,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		//batch.dispose();		
-		//img.dispose();
+		batch.dispose();				
 	}
 
 }

@@ -51,7 +51,7 @@ public class Logic {
     public int activeXY = 0;
     
 	public int gameState = PLAYER_STATE;
-	public int heroState = GameScreen.HERO_IDLE; 
+	public int logicBattleState = GameScreen.HERO_IDLE; 
 	public Tile[][] tiles;
 	
 	public Vector3 mouse_position = new Vector3(0,0,0);
@@ -164,8 +164,8 @@ public class Logic {
 		}
 		
 		int count = 5;
-		while(count-- > 0 && this.detectShuffle())
-			this.shuffle(true);		
+		while(count-- > 0 && this.detectShuffle()) // Verifica mais cinco vezes se o jogo não está sem combinações
+			this.shuffle(true); // Remove até os componentes quimicos combinados
 	}
 	
 	/**
@@ -173,77 +173,77 @@ public class Logic {
 	 * @return
 	 */
 	public boolean detectShuffle() {
-		boolean canShuffle = true;
+		boolean canShuffle = true; // Verificador de esparalhamento dos itens
 	
 		Tile tile; 
 		for (int i = 0; i < (sizeAreaW * sizeAreaH); i++) {
-			tile = ((Tile) gameArea.getCells().get(i).getActor());
+			tile = ((Tile) gameArea.getCells().get(i).getActor()); // Simplificar o acesso ao componente quimico
 			switch (tile.type) {
-			case GameScreen.H:							 	
-			case GameScreen.O:		
-			case GameScreen.N:							 
-			case GameScreen.Na:							 
-				if ( (i % sizeAreaW) != 0 ) { // Esquerda
-					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == tile.type)
-						canShuffle = false;
-				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
-					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == tile.type)
-						canShuffle = false;		
-				} if ( (i - sizeAreaW) >= 0 ) { // Cima
-					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == tile.type)
-						canShuffle = false;
-				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
-					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == tile.type)
-						canShuffle = false;
-				}
-				break;
-			case GameScreen.H2:					
-			case GameScreen.N2:							 
-			case GameScreen.Na2:							 
-				if ( (i % sizeAreaW) != 0 ) { // Esquerda
-					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.O)
-						canShuffle = false;
-				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
-					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O)
-						canShuffle = false;		
-				} if ( (i - sizeAreaW) >= 0 ) { // Cima
-					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O)
-						canShuffle = false;
-				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
-					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.O)
-						canShuffle = false;
-				}
-				break;
-			case GameScreen.O2:	
-				if ( (i % sizeAreaW) != 0 ) { // Esquerda
-					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.C)
-						canShuffle = false;
-				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
-					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.C)
-						canShuffle = false;		
-				} if ( (i - sizeAreaW) >= 0 ) { // Cima
-					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.C)
-						canShuffle = false;
-				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
-					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.C)
-						canShuffle = false;
-				}
-				break;
-			case GameScreen.C:			
-				if ( (i % sizeAreaW) != 0 ) { // Esquerda
-					if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.O2)
-						canShuffle = false;
-				} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
-					if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O2)
-						canShuffle = false;		
-				} if ( (i - sizeAreaW) >= 0 ) { // Cima
-					if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O2)
-						canShuffle = false;
-				} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
-					if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.O2)
-						canShuffle = false;
-				}
-				break;
+				case GameScreen.H:							 	
+				case GameScreen.O:		
+				case GameScreen.N:							 
+				case GameScreen.Na:							 
+					if ( (i % sizeAreaW) != 0 ) { // Esquerda
+						if (((Tile) gameArea.getCells().get(i-1).getActor()).type == tile.type)
+							canShuffle = false;
+					} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+						if (((Tile) gameArea.getCells().get(i+1).getActor()).type == tile.type)
+							canShuffle = false;		
+					} if ( (i - sizeAreaW) >= 0 ) { // Cima
+						if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == tile.type)
+							canShuffle = false;
+					} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+						if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == tile.type)
+							canShuffle = false;
+					}
+					break;
+				case GameScreen.H2:					
+				case GameScreen.N2:							 
+				case GameScreen.Na2:							 
+					if ( (i % sizeAreaW) != 0 ) { // Esquerda
+						if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.O)
+							canShuffle = false;
+					} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+						if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O)
+							canShuffle = false;		
+					} if ( (i - sizeAreaW) >= 0 ) { // Cima
+						if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O)
+							canShuffle = false;
+					} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+						if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.O)
+							canShuffle = false;
+					}
+					break;
+				case GameScreen.O2:	
+					if ( (i % sizeAreaW) != 0 ) { // Esquerda
+						if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.C)
+							canShuffle = false;
+					} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+						if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.C)
+							canShuffle = false;		
+					} if ( (i - sizeAreaW) >= 0 ) { // Cima
+						if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.C)
+							canShuffle = false;
+					} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+						if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.C)
+							canShuffle = false;
+					}
+					break;
+				case GameScreen.C:			
+					if ( (i % sizeAreaW) != 0 ) { // Esquerda
+						if (((Tile) gameArea.getCells().get(i-1).getActor()).type == GameScreen.O2)
+							canShuffle = false;
+					} if ( ((i+1) % sizeAreaW) != 0 ) { // Direita
+						if (((Tile) gameArea.getCells().get(i+1).getActor()).type == GameScreen.O2)
+							canShuffle = false;		
+					} if ( (i - sizeAreaW) >= 0 ) { // Cima
+						if (((Tile) gameArea.getCells().get(i-sizeAreaW).getActor()).type == GameScreen.O2)
+							canShuffle = false;
+					} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
+						if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == GameScreen.O2)
+							canShuffle = false;
+					}
+					break;
 			}
 		}
 		
@@ -426,16 +426,17 @@ public class Logic {
 	        	tilesFall();
 	        	if (matched) { /** trava de alguma forma **/
 	        		gameState = IDLE_STATE;		        	
-		    		heroState = GameScreen.HERO_ATTACK;
+	        		logicBattleState = GameScreen.GAME_IDLE;		    			        
 	        	} else { //combined	        		
-	        		gameState = PLAYER_STATE;
-	        		heroState = GameScreen.HERO_IDLE;
+	        		gameState = IDLE_STATE;
+//	        		gameState = PLAYER_STATE;
+	        		logicBattleState = GameScreen.ENEMY_ATTACK;
+//	        		logicBattleState = GameScreen.GAME_CONTINUE;
 	        	}
 	        	matched = false;
 	        	combined = false;	    		
 	        }
-			
-	        System.out.println("GAME STATE: "+gameState+"\n");
+				       
 	    }
 	
 	/**
@@ -452,6 +453,9 @@ public class Logic {
 	        }
 	}
 	
+	/**
+	 * 
+	 */
 	public void tilesFall() {				
 		for (int i = 0; i < (sizeAreaW*sizeAreaH); i++) {
 			if (((Tile) gameArea.getCells().get(i).getActor()).destroy) {

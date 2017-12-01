@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class HeroAnimation extends Actor {
 	private AtlasRegion   atlasRegion;
-	public Animation     animation;	
+	public Animation      animation;	
 	private TextureRegion currentFrame;
 	public float         stateTime;
 	public boolean finish = false;
@@ -29,7 +29,7 @@ public class HeroAnimation extends Actor {
 		//this.setVisible(false);
 	}
 	
-	public boolean finished() {
+	public boolean finished(float stateTime) {
 		finish = animation.isAnimationFinished(stateTime);
 		return finish;
 	}
@@ -41,6 +41,10 @@ public class HeroAnimation extends Actor {
 		//batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 		batch.draw(currentFrame, getX(), getY());		
 		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);				
+	}
+	
+	public TextureRegion getFrame(float stateTime) {
+		return (TextureRegion) animation.getKeyFrame(stateTime, true);  //new
 	}
 	
 	@Override
