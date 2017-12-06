@@ -27,6 +27,24 @@ public class Tile extends Actor {
         this.setHeight(y); // Setando a altura do bloco contendo o ator
     }
     
+    
+    /**
+     * 
+     * @return
+     */
+	public Sprite getSprite() {
+		return sprite;
+	}
+
+	/**
+	 * 
+	 * @param sprite
+	 */
+	public void setSprite(Sprite sprite) {
+		this.sprite = sprite;
+	}
+
+
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);				

@@ -9,7 +9,9 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "QuimiCrush";
-		config.resizable = false;						//
+		config.resizable = false;	
+		//config.width = 320;
+		//config.height = 568;//
 		new LwjglApplication(new QuimiCrush(), config);
 	}
 }

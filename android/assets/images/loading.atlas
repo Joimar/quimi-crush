@@ -1,33 +1,12 @@
 
-Loading.png
+loading.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-attack_01
-  rotate: false
-  xy: 915, 860
-  size: 30, 43
-  orig: 30, 43
-  offset: 0, 0
-  index: -1
-attack_04
-  rotate: false
-  xy: 915, 860
-  size: 30, 43
-  orig: 30, 43
-  offset: 0, 0
-  index: -1
-damage1_02
-  rotate: false
-  xy: 915, 860
-  size: 30, 43
-  orig: 30, 43
-  offset: 0, 0
-  index: -1
 attack_02
   rotate: false
-  xy: 947, 870
+  xy: 525, 131
   size: 28, 42
   orig: 28, 42
   offset: 0, 0
@@ -55,37 +34,58 @@ bowl_01
   index: -1
 bowl_02
   rotate: false
-  xy: 203, 41
+  xy: 803, 785
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 bowl_03
   rotate: false
-  xy: 803, 785
+  xy: 869, 905
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 bowl_04
   rotate: false
-  xy: 869, 905
+  xy: 269, 41
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 bowl_05
   rotate: false
-  xy: 269, 41
+  xy: 203, 41
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 damage1_01
   rotate: false
-  xy: 458, 117
+  xy: 490, 131
   size: 33, 42
   orig: 33, 42
+  offset: 0, 0
+  index: -1
+damage1_02
+  rotate: false
+  xy: 458, 116
+  size: 30, 43
+  orig: 30, 43
+  offset: 0, 0
+  index: -1
+attack_01
+  rotate: false
+  xy: 458, 116
+  size: 30, 43
+  orig: 30, 43
+  offset: 0, 0
+  index: -1
+attack_04
+  rotate: false
+  xy: 458, 116
+  size: 30, 43
+  orig: 30, 43
   offset: 0, 0
   index: -1
 die_01
@@ -132,7 +132,7 @@ enemy_10
   index: -1
 enemy1_attack1_02
   rotate: false
-  xy: 803, 345
+  xy: 803, 455
   size: 34, 53
   orig: 34, 53
   offset: 0, 0
@@ -172,6 +172,20 @@ enemy1_damage1_02
   orig: 34, 49
   offset: 0, 0
   index: -1
+enemy1_damage1_03
+  rotate: false
+  xy: 803, 239
+  size: 28, 53
+  orig: 28, 53
+  offset: 0, 0
+  index: -1
+enemy1_idle
+  rotate: false
+  xy: 803, 239
+  size: 28, 53
+  orig: 28, 53
+  offset: 0, 0
+  index: -1
 enemy1_die_01
   rotate: false
   xy: 849, 738
@@ -186,23 +200,23 @@ enemy1_die_02
   orig: 37, 42
   offset: 0, 0
   index: -1
-enemy1_idle
+enemy1_die_03
   rotate: false
-  xy: 803, 239
-  size: 28, 53
-  orig: 28, 53
+  xy: 627, 193
+  size: 54, 28
+  orig: 54, 28
   offset: 0, 0
   index: -1
-enemy1_damage1_03
+enemy_die
   rotate: false
-  xy: 803, 239
-  size: 28, 53
-  orig: 28, 53
+  xy: 627, 193
+  size: 54, 28
+  orig: 54, 28
   offset: 0, 0
   index: -1
 enemy_01
   rotate: false
-  xy: 803, 455
+  xy: 803, 400
   size: 34, 53
   orig: 34, 53
   offset: 0, 0
@@ -251,7 +265,7 @@ enemy_07
   index: -1
 enemy_08
   rotate: false
-  xy: 803, 400
+  xy: 803, 345
   size: 34, 53
   orig: 34, 53
   offset: 0, 0
@@ -277,30 +291,16 @@ enemy_12
   orig: 276, 60
   offset: 0, 0
   index: -1
-enemy_die
-  rotate: false
-  xy: 627, 193
-  size: 54, 28
-  orig: 54, 28
-  offset: 0, 0
-  index: -1
-enemy1_die_03
-  rotate: false
-  xy: 627, 193
-  size: 54, 28
-  orig: 54, 28
-  offset: 0, 0
-  index: -1
 heart
   rotate: false
-  xy: 21, 1
+  xy: 1, 1
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 heart-bg
   rotate: false
-  xy: 1, 1
+  xy: 21, 1
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
@@ -320,8 +320,210 @@ logo
   offset: 0, 0
   index: -1
 
-Loading2.png
-size: 1024,512
+loading2.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_16
+  rotate: false
+  xy: 1, 431
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+tuto_14
+  rotate: false
+  xy: 1, 431
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+tuto_17
+  rotate: false
+  xy: 1, 1
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+tuto_15
+  rotate: false
+  xy: 1, 1
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+
+loading3.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_11
+  rotate: false
+  xy: 1, 431
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+tuto_12
+  rotate: false
+  xy: 1, 1
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+
+loading4.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_07
+  rotate: false
+  xy: 1, 1
+  size: 689, 425
+  orig: 689, 425
+  offset: 0, 0
+  index: -1
+tuto_13
+  rotate: false
+  xy: 1, 428
+  size: 692, 428
+  orig: 692, 428
+  offset: 0, 0
+  index: -1
+
+loading5.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_05
+  rotate: false
+  xy: 1, 428
+  size: 689, 425
+  orig: 689, 425
+  offset: 0, 0
+  index: -1
+tuto_08
+  rotate: false
+  xy: 1, 1
+  size: 689, 425
+  orig: 689, 425
+  offset: 0, 0
+  index: -1
+tuto_10
+  rotate: false
+  xy: 1, 1
+  size: 689, 425
+  orig: 689, 425
+  offset: 0, 0
+  index: -1
+
+loading6.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_06
+  rotate: false
+  xy: 1, 1
+  size: 689, 425
+  orig: 689, 425
+  offset: 0, 0
+  index: -1
+tuto_09
+  rotate: false
+  xy: 1, 428
+  size: 689, 425
+  orig: 689, 425
+  offset: 0, 0
+  index: -1
+
+loading7.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_18
+  rotate: false
+  xy: 1, 1
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+tuto_21
+  rotate: false
+  xy: 1, 427
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+tuto_23
+  rotate: false
+  xy: 1, 427
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+
+loading8.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_19
+  rotate: false
+  xy: 1, 427
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+tuto_20
+  rotate: false
+  xy: 1, 1
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+tuto_22
+  rotate: false
+  xy: 1, 1
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+
+loading9.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+tuto_02
+  rotate: false
+  xy: 1, 1
+  size: 688, 419
+  orig: 688, 419
+  offset: 0, 0
+  index: -1
+tuto_04
+  rotate: false
+  xy: 1, 1
+  size: 688, 419
+  orig: 688, 419
+  offset: 0, 0
+  index: -1
+tuto_24
+  rotate: false
+  xy: 1, 422
+  size: 689, 424
+  orig: 689, 424
+  offset: 0, 0
+  index: -1
+
+loading10.png
+size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -330,5 +532,19 @@ fieldBattle
   xy: 1, 1
   size: 705, 344
   orig: 705, 344
+  offset: 0, 0
+  index: -1
+tuto_01
+  rotate: false
+  xy: 1, 347
+  size: 688, 419
+  orig: 688, 419
+  offset: 0, 0
+  index: -1
+tuto_03
+  rotate: false
+  xy: 1, 347
+  size: 688, 419
+  orig: 688, 419
   offset: 0, 0
   index: -1

@@ -30,7 +30,7 @@ public class LoadingScreen implements Screen {
 //*************************************************************//	
 	private QuimiCrush parent; // Quem orquestra tudo
 	private int        currentLoadingStage = 0; // Estado inicial de carregamento	
-	private float      countDown           = 2.5f; // Tempo, em segundos, para se manter na tela de loading após carregar tudo	
+	private float      countDown           = 2f; // Tempo, em segundos, para se manter na tela de loading após carregar tudo	
 	private Animation  animation; // Animação de progresso do loading 
 	
 //*************************************************************//
@@ -104,16 +104,16 @@ public class LoadingScreen implements Screen {
 
 		table = new Table();
 		table.setFillParent(true);
-		table.setDebug(false);
+		//table.setDebug(true);
 		table.setBackground(new TiledDrawable(background));		
 			
 		loadingTable = new Table();		
 		loadingTable.add(new LoadingBarPart(animation));		
 		
 		//table.top();			
-		table.add(titleImage).width(titleImage.getWidth()*1.5f).height(titleImage.getHeight()*1.5f);//; 
-		table.row().align(Align.center).pad(30, 0, 0, 0);
-		table.add(loadingTable);
+		table.add(titleImage).width(titleImage.getWidth()*1.5f).height(titleImage.getHeight()*1.5f).expand().center();//; 
+		table.row().pad(30, 0, 0, 0);
+		table.add(loadingTable).expand().center();
 			
 		stage.addActor(table);			
 	}
@@ -128,11 +128,6 @@ public class LoadingScreen implements Screen {
 		//
 		if (parent.assetsManager.MANAGER.update()) { // Load some, will return true if done loading
 			currentLoadingStage+= 1;
-			
-		/*	if(currentLoadingStage <= END){
-				loadingTable.getCells().get((currentLoadingStage-1)*2).getActor().setVisible(true);  // new
-				//loadingTable.getCells().get((currentLoadingStage-1)*2+1).getActor().setVisible(true); 
-			}*/
 			
 	        switch(currentLoadingStage) {
 	            case FONT:

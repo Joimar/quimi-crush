@@ -35,13 +35,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.quimic.animation.HeroAnimation;
 import com.quimic.game.QuimiCrush;
 import com.quimic.logic.Logic;
 import com.quimic.tile.Tile;
 
-public class GameScreen implements Screen {
-	private QuimiCrush parent;
+abstract public class GameScreen implements Screen {
+	protected QuimiCrush parent;
 	
 	public static final int H     = 0;
 	public static final int O     = 1;
@@ -55,9 +54,8 @@ public class GameScreen implements Screen {
 	public static final int H2O   = 9;	
 	public static final int CO2   = 10;	
 	public static final int N2O   = 11;
-	public static final int Na2O  = 12;	
+	public static final int Na2O  = 12;
 
-//*************************************************************//
 	public static final int HERO_IDLE   = 0;
 	public static final int HERO_ATTACK = 1;
 	public static final int HERO_HEAL   = 2;
@@ -71,7 +69,9 @@ public class GameScreen implements Screen {
 	public static final int ENEMY_DIE    = 10;
 	
 	public static final int GAME_IDLE     = 20;
-	public static final int GAME_CONTINUE = 21;	
+	public static final int GAME_CONTINUE = 21;
+	public static final int GAME_WIN      = 22;
+	public static final int GAME_LOSE     = 23;
 	
 //*************************************************************//	
 	public final float PROPORTION_WIDTH_BATTLE  = 1f;
@@ -81,75 +81,76 @@ public class GameScreen implements Screen {
 	public final float PROPORTION_WIDTH_GAME    = 0.8f;
 	public final float PROPORTION_HEIGHT_GAME   = 0.65f;	
 	
-	private final int sizeMapW = 6; // Largura da matriz do jogo
-	private final int sizeMapH = 6; // Altura da matriz do jogo
-	private final int QTD_INFO = 4; // Quantidade de itens para informação/ajuda do jogo
-	
-	private final int LIFE_HERO  = 10;
-	private final int LIFE_ENEMY = 5;
+	/*protected final int sizeMapW; // Largura da matriz do jogo
+	protected final int sizeMapH; // Altura da matriz do jogo
+	protected final int QTD_INFO; // Quantidade de itens para informação/ajuda do jogo
+	*/
+	protected final int LIFE_HERO  = 10; // Valores default
+	protected final int LIFE_ENEMY = 5;  // Valores default
 
 //*************************************************************//		
-	private Stage          stage; // Controla e reage às entradas do usuário	
-	private ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un	
-	private OrthographicCamera cam;
+	protected Stage          stage; // Controla e reage às entradas do usuário	
+	protected ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un	
+	protected OrthographicCamera cam;
 			
-	public float WIDTH_OBJECT_INFO;
-	public float HEIGHT_OBJECT_INFO;
-	public float WIDTH_TILE;
-	public float HEIGHT_TILE; 	 
+	protected float WIDTH_OBJECT_INFO;
+	protected float HEIGHT_OBJECT_INFO;
+	protected float WIDTH_TILE;
+	protected float HEIGHT_TILE; 	 
 
 //*************************************************************//		
-	Logic logic;
+	protected Logic logic;	
 	
-	Table view;
-	Table battle;
-	Table info;
-	Table game;		
+	protected Table view;
+	protected Table battle;
+	protected Table info;
+	protected Table game;		
+	
+	protected Skin skin;
 	
 //*************************************************************//			
-	ArrayList<Texture> elementsT;	
-	Tile[][] tiles;
-	Tile[] tilesInfo;
+	protected ArrayList<Texture> elementsTSelected;	
+	protected ArrayList<Texture> elementsT;	
+	protected Tile[][] tiles;
+	protected Tile[] tilesInfo;
 	
-	private Label infoLabel;
-	private TextureAtlas atlas; // Empacotamento das imagens 			
-	private AtlasRegion  background; //
-	private AtlasRegion  fieldBattle; //
+	protected Label infoLabel;
+	protected TextureAtlas atlas; // Empacotamento das imagens 			
+	protected AtlasRegion  background; //
+	protected AtlasRegion  fieldBattle; //
 	
-	private AtlasRegion  hero_idle; //
-	private AtlasRegion  enemy_idle; //
-	private AtlasRegion  hero_die; //
-	private AtlasRegion  enemy_die; //
-	private AtlasRegion  heart; //
-	private AtlasRegion  nonHeart; //		
+	protected AtlasRegion  hero_idle; //
+	protected AtlasRegion  enemy_idle; //
+	protected AtlasRegion  hero_die; //
+	protected AtlasRegion  enemy_die; //
+	protected AtlasRegion  heart; //
+	protected AtlasRegion  nonHeart; //		
 	
 	//Animation       heroIdleAnimation;	
-	Animation       heroAttackAnimation;
+	protected Animation       heroAttackAnimation;
 	//Animation       heroHealAnimation;
-	Animation       heroDamageAnimation;
-	Animation       heroDieAnimation;
+	protected Animation       heroDamageAnimation;
+	protected Animation       heroDieAnimation;
 	
 	//Animation       enemyIdleAnimation;	
-	Animation       enemyAttackAnimation;
+	protected Animation       enemyAttackAnimation;
 	//Animation       enemyHealAnimation;
-	Animation       enemyDamageAnimation;
-	Animation       enemyDieAnimation;
+	protected Animation       enemyDamageAnimation;
+	protected Animation       enemyDieAnimation;
 	
 	/*TextureRegion[] HeroAttackRegions;	
 	TextureRegion[] HeroDamageRegions;
 	TextureRegion[] HeroDieRegions;*/
 	
 	//HeroAnimation heroAnimation;
-	boolean heroAnimationFinish  = true;
-	boolean enemyAnimationFinish = true;
-	int lifeHero;
-	int lifeEnemy;	
-	SpriteBatch batch;
-	public float stateTime;
+	protected boolean heroAnimationFinish  = true;
+	protected boolean enemyAnimationFinish = true;
+	protected int lifeHero;
+	protected int lifeEnemy;	
+	protected SpriteBatch batch;
+	protected float stateTime;
 	
-	int battleState = GAME_CONTINUE;
-
-	TextButton back;
+	protected int battleState = GAME_CONTINUE;	
 	
 //*************************************************************//		    
 	/**
@@ -183,7 +184,20 @@ public class GameScreen implements Screen {
 		elementsT.add(new Texture("images/game/chemic/N2O.png"));  // 11
 		elementsT.add(new Texture("images/game/chemic/Na2O.png")); // 12
 		
-		WIDTH_TILE  = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW;
+		elementsTSelected = new ArrayList<Texture>();
+		// Os elementos simples da tabela quando selecionado		
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sH.png"));  // 0		
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sO.png"));  // 1
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sC.png"));  // 2
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sN.png"));  // 3
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sNa.png")); // 4			
+		// Os elementos com duas combinações quando selecionado
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sH2.png"));  // 5
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sO2.png"));  // 6
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sN2.png"));  // 7
+		elementsTSelected.add(new Texture("images/game/chemic/selected/sNa2.png")); // 8	
+		
+		/*WIDTH_TILE  = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW;
 		HEIGHT_TILE = (parent.windowHeight * PROPORTION_HEIGHT_GAME) / sizeMapH;
 		
 		WIDTH_OBJECT_INFO  = (parent.windowWidth * PROPORTION_WIDTH_INFO);
@@ -193,16 +207,21 @@ public class GameScreen implements Screen {
 		tilesInfo = new Tile[QTD_INFO];
 		for (int i = 0; i < QTD_INFO; i++) {
 			tilesInfo[i] = new Tile(new Sprite(elementsT.get(H2O+i)), H2O+i, WIDTH_OBJECT_INFO*0.8f, HEIGHT_OBJECT_INFO*0.8f);
-		}
+		}*/
 		
 		atlas = parent.assetsManager.MANAGER.get(parent.assetsManager.LOADING_IMAGES);
-		this.loadAnimations();
+		
+		parent.assetsManager.queueAddSkin(); // Carrega as skins  
+		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
+		skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
+		
+		//this.loadAnimations();
 	}
 
 	/**
 	 * 
 	 */
-	private void loadAnimations() {					
+	/*private void loadAnimations() {					
 		heart      = atlas.findRegion("heart"); // Captura o background da tela do loading
 		nonHeart   = atlas.findRegion("heart-bg"); // Captura o background da tela do loading
 				
@@ -233,6 +252,7 @@ public class GameScreen implements Screen {
 		enemyDieAnimation = new Animation(0.7f, regionsT, PlayMode.NORMAL);	// Inimigo morto	
 		enemy_die = atlas.findRegion("enemy_die");                          // Inimigo caido
 	}
+	*/
 	
 	/**
 	 * 
@@ -241,7 +261,7 @@ public class GameScreen implements Screen {
 	 * @param end
 	 * @return
 	 */
-	private Array<TextureRegion> addRegionsArray(String name, int begin, int end) {
+	protected Array<TextureRegion> addRegionsArray(String name, int begin, int end) {
 		Array<TextureRegion> array = new Array<TextureRegion>();		
 		String auxN = "0";
 		for (int i = begin; i <= end; i++) {
@@ -259,11 +279,8 @@ public class GameScreen implements Screen {
 	 * 
 	 * @param on
 	 */
-	private void DebugOnOf(boolean on) {
-		battle.setDebug(on);
-		view.setDebug(on);
-		info.setDebug(on);
-		//game.setDebug(on);
+	protected void DebugOnOf(Stage s, boolean on) {
+		s.setDebugAll(on);
 	}
 			
 	@Override
@@ -276,13 +293,11 @@ public class GameScreen implements Screen {
 		
 		battle = new Table();		
 		info   = new Table();
-		//info.setDebug(true);
 		game   = new Table();				
-		//game.setDebug(true);
 		view   = new Table();
 		view.setFillParent(true);						
 							
-		for (int i = 0; i < sizeMapW; i++) {
+		/*for (int i = 0; i < sizeMapW; i++) {
 			for (int j = 0; j < sizeMapH; j++) {
 				int type = MathUtils.random(0,4);
 				Tile newTile = new Tile(new Sprite(elementsT.get(type)), type, WIDTH_TILE, HEIGHT_TILE);				
@@ -291,13 +306,7 @@ public class GameScreen implements Screen {
 		}
 		
 		//cam = new OrthographicCamera(32,24);			
-		logic = new Logic(parent, tiles, elementsT, cam, game, sizeMapW, sizeMapH);		
-		
-		parent.assetsManager.queueAddSkin(); // Carrega as skins  
-		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
-		Skin skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
-								
-		back = new TextButton("<", skin);							
+		logic = new Logic(parent, tiles, elementsT, cam, game, sizeMapW, sizeMapH);		*/																			
 							
 		background = atlas.findRegion("background"); // Captura o background da tela do loading	
 		fieldBattle = atlas.findRegion("fieldBattle"); // Captura o background da tela do loading		
@@ -309,17 +318,17 @@ public class GameScreen implements Screen {
 		view.row().left().bottom();
 		view.add(game);
 		view.right();				
-		info.add(infoLabel);	
+		info.add(infoLabel);							
 		
-		// BATTLE
+	/*	// BATTLE
 		lifeHero  = LIFE_HERO;
 		lifeEnemy = LIFE_ENEMY;
 		
 		battle.bottom().padBottom(20);
 		battle.row().bottom();
 		battle.add().colspan(5).padRight(100f);		
-		battle.add().colspan(5);			
-				
+		battle.add().colspan(5);
+		
 		// GAME
 		for (int i = 0; i < sizeMapW; i++) {
 			for (int j = 0; j < sizeMapH; j++) {
@@ -332,12 +341,8 @@ public class GameScreen implements Screen {
 		for (int i = 0; i < QTD_INFO; i++) {
 			info.row().padBottom(10f);
 			info.add(tilesInfo[i]);			
-		}
+		}	*/									
 		
-		info.setSize(parent.windowWidth*PROPORTION_WIDTH_INFO, parent.windowHeight*PROPORTION_HEIGHT_INFO);
-		back.setFillParent(true);
-		//back.setScale(parent.windowWidth*PROPORTION_WIDTH_INFO, parent.windowHeight*PROPORTION_HEIGHT_INFO);
-		//info.add(back);
 		view.add(info);		
 					
 		view.setBackground(new TiledDrawable(background));		
@@ -347,18 +352,16 @@ public class GameScreen implements Screen {
 		//fieldBattle.setRegionHeight((int) Math.ceil(parent.windowHeight*PROPORTION_HEIGHT_BATTLE));		
 		battle.setBackground(new TiledDrawable(fieldBattle));			
 		
-		stage.addActor(view);
-		
-		back.addListener(new ChangeListener() {			
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				parent.changeScreen(QuimiCrush.MAIN);
-			}
-		});	
-		
-		
-		// Ativando debug das tables (...)
-		this.DebugOnOf(true);
+		stage.addActor(view);		
+	}
+	
+	/**
+	 *  Talvez remova esse metodo por conta das classes de cada level...
+	 * @param currentLevel
+	 */
+	public int currentLevel;
+	public void setCurrentLevel(int currentLevel) {
+		this.currentLevel = currentLevel;
 	}
 	
 	@Override
@@ -366,21 +369,23 @@ public class GameScreen implements Screen {
 		
 		Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);									
-		
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		// Segue o fluxo da lógica do jogo
 		logic.update();
 		
-		for (int i = 0; i < game.getCells().size; i++) {								
+		// Mudando contorno/imagem do item selecionado
+		for (int i = 0; i < game.getCells().size; i++) {
+			int typeTile = ((Tile) game.getCells().get(i).getActor()).type;
 			if (((Tile) game.getCells().get(i).getActor()).activated)  
-				((Tile) game.getCells().get(i).getActor()).setDebug(true);
+				((Tile) game.getCells().get(i).getActor()).sprite = new Sprite(elementsTSelected.get(typeTile)); 
 			else 
-				((Tile) game.getCells().get(i).getActor()).setDebug(false);			
-		}												
+				((Tile) game.getCells().get(i).getActor()).sprite = new Sprite(elementsT.get(typeTile));			
+		}														
 		
 		stage.act();
 		stage.draw();
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 		stateTime += delta;
 		
 		if (logic.logicBattleState == GAME_IDLE) {
@@ -398,17 +403,24 @@ public class GameScreen implements Screen {
 		}
 				
 		batch.begin();
-		System.out.println("GAMESTATE: "+battleState);
+		//System.out.println("GAMESTATE: "+battleState);
 		this.drawHero();
-		System.out.println("GAMESTATE_HERO: "+battleState);
+		//System.out.println("GAMESTATE_HERO: "+battleState);
 		this.drawEnemy();
-		System.out.println("GAMESTATE_ENEMY: "+battleState+"\n");
+		//System.out.println("GAMESTATE_ENEMY: "+battleState+"\n");
 		batch.end();		
 		
-		if (battleState == GAME_CONTINUE)
-			logic.gameState = logic.PLAYER_STATE;			
-//////////////////////////////////////////////////////////////////////////////////////////////////////					
-				
+		if (battleState == GAME_CONTINUE) {
+			logic.gameState = logic.PLAYER_STATE;
+		} else if (battleState == GAME_WIN) {			
+			// Evita que perca a última fase concluida e extrapole o número total de fases
+			if (currentLevel >= parent.getLevelPass() && currentLevel < parent.TOTAL_LEVELS)
+				parent.setLevelPass(currentLevel+1);
+			parent.changeScreen(parent.MAIN);
+		} else if (battleState == GAME_LOSE) {
+			parent.setLevelPass(0); // Calma...
+			parent.changeScreen(parent.MAIN);
+		}
 	}
 	
 	/**
@@ -417,8 +429,7 @@ public class GameScreen implements Screen {
 	private void drawHero() {		
 		float x = battle.getCells().get(battle.getCells().size-2).getActorX();
 		float y = battle.getCells().get(battle.getCells().size-2).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);				
-		
-		//float xHeart = x - heart.getRegionWidth(); 
+				
 		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-2).getActorHeight();   
 		
 		if (heroAnimationFinish) { // hero.idle
@@ -459,7 +470,7 @@ public class GameScreen implements Screen {
 			if (! heroDieAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
 				batch.draw((TextureRegion) heroDieAnimation.getKeyFrame(stateTime, true), x, y);				
 			} else { 				
-				battleState = GAME_CONTINUE;								
+				battleState = GAME_LOSE;								
 				heroAnimationFinish = true;
 				enemyAnimationFinish = true;
 				stateTime = 0;
@@ -520,7 +531,7 @@ public class GameScreen implements Screen {
 			if (! enemyDieAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
 				batch.draw((TextureRegion) enemyDieAnimation.getKeyFrame(stateTime, true), x, y);				
 			} else { 				
-				battleState = GAME_CONTINUE;								
+				battleState = GAME_WIN;								
 				heroAnimationFinish = true;
 				enemyAnimationFinish = true;
 				stateTime = 0;
@@ -535,7 +546,7 @@ public class GameScreen implements Screen {
 			batch.draw(nonHeart, x-1 + (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
 		}
 	}
-
+	
 	@Override
 	public void resize(int width, int height) {
 	}
@@ -554,13 +565,14 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
+		stage.clear();
 
 	}
 
 	@Override
 	public void dispose() {
-		batch.dispose();				
+		batch.dispose();
+		stage.dispose();
 	}
 
 }

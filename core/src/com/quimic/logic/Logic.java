@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
@@ -48,7 +49,7 @@ public class Logic {
     public boolean tileIsActive = false;
     public int activeX = 0;
     public int activeY = 0;
-    public int activeXY = 0;
+    public int activeXY = 0;   
     
 	public int gameState = PLAYER_STATE;
 	public int logicBattleState = GameScreen.HERO_IDLE; 
@@ -56,8 +57,8 @@ public class Logic {
 	
 	public Vector3 mouse_position = new Vector3(0,0,0);
 	
-	public int clickDelayCounter = 0;
-    public int clickDelayCounterLength = 10;
+	/*public int clickDelayCounter = 0;
+    public int clickDelayCounterLength = 5;*/
 	
 	// ajeitar depois
 	ArrayList<Texture> elementsT;
@@ -68,6 +69,16 @@ public class Logic {
 	
 	boolean soundEffects = false; 
 	
+	/**
+	 * 
+	 * @param parent
+	 * @param tiles
+	 * @param elementsT
+	 * @param cam
+	 * @param gameArea
+	 * @param sizeAreaW
+	 * @param sizeAreaH
+	 */
 	public Logic(QuimiCrush parent, Tile[][] tiles, ArrayList<Texture> elementsT, OrthographicCamera cam, Table gameArea, int sizeAreaW, int sizeAreaH) {
 		assetsManager = parent.assetsManager;
 		// tells our asset manger that we want to load the sounds set in loadSounds method
@@ -93,16 +104,20 @@ public class Logic {
 		camera = cam;
         //viewport = new StretchViewport(windowWidth, windowHeight, camera);
         //viewport.apply();
+		
+		//this.tilesListener();		
 	}
+		
 	
 	/**
 	 * 
 	 * @param previous
 	 * @param current
 	 */
-	private void combineTile(Tile previous, Tile current) {
+	public void combineTile(Tile previous, Tile current) {
 		matched = false;
 		combined = false;
+		
 		if (previous.type == GameScreen.H && current.type == GameScreen.H) {
 			current.type = GameScreen.H2;
 			current.sprite = new Sprite(elementsT.get(GameScreen.H2));		
@@ -148,7 +163,7 @@ public class Logic {
 	 * 
 	 * @param fully
 	 */
-	public void shuffle(boolean fully) {				
+	private void shuffle(boolean fully) {				
 		for (int i = 0; i < (sizeAreaW * sizeAreaH); i++) {			
 			if (!fully) {
 				if ( ((Tile) gameArea.getCells().get(i).getActor()).type <= 4) {
@@ -172,7 +187,7 @@ public class Logic {
 	 * 
 	 * @return
 	 */
-	public boolean detectShuffle() {
+	private boolean detectShuffle() {
 		boolean canShuffle = true; // Verificador de esparalhamento dos itens
 	
 		Tile tile; 
@@ -255,184 +270,38 @@ public class Logic {
 	 */
 	public void update() {					
 	        // Players Turn
-	        if (gameState == PLAYER_STATE) {
-	        	
+	        if (gameState == PLAYER_STATE) {	        	
 	        	if (this.detectShuffle()) {
 	        		System.out.println("Bagunça isso!");
 	        		this.shuffle(false);	
 	        	}
 	        	
-	            mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+	            /*mouse_position.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 	            camera.unproject(mouse_position);
 	            //mouse_position.x += 500;
 	            //mouse_position.y = Gdx.graphics.getHeight() - mouse_position.y;
 	            mouse_position.x += windowWidth / 2;
-	            mouse_position.y += windowHeight / 2;
-	            
-	            //System.out.println("Largura(x) e Altura(y): "+Gdx.graphics.getWidth()+" "+Gdx.graphics.getHeight());
-	            //System.out.println("Mouse Position x|y    : " + mouse_position.x + " " + mouse_position.y);
+	            mouse_position.y += windowHeight / 2;*/
 
-	            clickDelayCounter++;
-	            	      
-	            for (int i = 0; i < gameArea.getCells().size; i++) {								
-	    			gameArea.getCells().get(i).getActor().addListener(new EventListener() {
-						@Override
-						public boolean handle(Event event) {		
-							// Check for Tile Swap
-				            //if (Gdx.input.isButtonPressed(Input.Keys.LEFT)) {			            	
-				            if (Gdx.input.isTouched()) {
-				                if (clickDelayCounter > clickDelayCounterLength) {
-				                	Tile previous = (Tile) gameArea.getCells().get(activeXY).getActor();
-					            	Tile current = (Tile) event.getListenerActor();
-					            	
-					            	System.out.println(activeXY+" : "+gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true));
-					            	if (activeXY == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true))
-					            		return false;
-				                    // Check tile to left side
-				                    if (tileIsActive) {				                    	
-				                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
-				                    	if ( (activeXY % sizeAreaW) != 0 &&  ((activeXY - 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) ) {
-				                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
-				                            	// Verica se está a esquerda
-				                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
-				                                    // De-activate
-				                                    tileIsActive = false;
-				                                    previous.activated = false;
+	            //clickDelayCounter++;
+	          
 
-				                                    combineTile(previous, current);				                                    
-				                                    
-				                                    clickDelayCounter = 0;				                                    
-
-				                               // }
-				                            }
-				                        }
-				                    }
-				                    // Check tile to right side
-				                    if (tileIsActive) {				                    	
-				                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
-				                    	if ( ((activeXY+1) % sizeAreaW) != 0 && ((activeXY + 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) ) {
-				                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
-				                            	// Verica se está a esquerda
-				                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
-				                                    // De-activate
-				                                    tileIsActive = false;
-				                                    previous.activated = false;
-
-				                                    combineTile(previous, current);	
-				                                    
-				                                    clickDelayCounter = 0;
-				                               // }
-				                            }
-				                        }
-				                    }
-				                    // Check tile up
-				                    if (tileIsActive) {				                    	
-				                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
-				                    	if ((activeXY-sizeAreaW) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) {
-				                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
-				                            	// Verica se está a esquerda
-				                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
-				                                    // De-activate
-				                                    tileIsActive = false;
-				                                    previous.activated = false;
-
-				                                    combineTile(previous, current);	
-				                                    
-				                                    clickDelayCounter = 0;
-				                               // }
-				                            }
-				                        }
-				                    }
-				                    // Check tile down
-				                    if (tileIsActive) {				                    	
-				                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
-				                    	if ((activeXY+sizeAreaW) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) {
-				                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
-				                            	// Verica se está a esquerda
-				                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
-				                                    // De-activate
-				                                    tileIsActive = false;
-				                                    previous.activated = false;
-				                                    
-				                                    combineTile(previous, current);					                                    
-				                                    
-				                                    clickDelayCounter = 0;
-				                               // }
-				                            }
-				                        }
-				                    }
-
-				                    // Check for Matches
-				                    gameState = MATCH_STATE;
-
-				                }
-				            }
-							
-				            //begin
-				            //if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-				            if (Gdx.input.isTouched()) {
-				                if (clickDelayCounter > clickDelayCounterLength) {	                	
-				                  // for (int i = 0; i < gameArea.getCells().size; i++) { // for (int i = 0; i < tiles.length; i++) {
-				                     //   for (int j = 0; j < tiles.length; j++) {	                        		                        	
-				                	//   if ((mouse_position.x > ((Tile) gameArea.getCells().get(i).getActor()).getX()) && (mouse_position.x < ((Tile) gameArea.getCells().get(i).getActor()).getX() + ((Tile) gameArea.getCells().get(i).getActor()).x) 
-				                //	   && (mouse_position.y > ((Tile) gameArea.getCells().get(i).getActor()).getY()) && (mouse_position.y < ((Tile) gameArea.getCells().get(i).getActor()).getY() + ((Tile) gameArea.getCells().get(i).getActor()).y)) {//if ((mouse_position.x > tiles[i][j].x) && (mouse_position.x < tiles[i][j].x + 64) && (mouse_position.y > tiles[i][j].y) && (mouse_position.y < tiles[i][j].y + 64)) {	                            	
-				                            
-				                            	//if (((Tile) gameArea.getCells().get(i).getActor()).type != 100) {
-				                				if (((Tile)event.getListenerActor()).type != 100) {
-
-				                                    // De-activate previous tile
-				                            		// tiles[activeX][activeY].activated = false;
-				                            		((Tile) gameArea.getCells().get(activeXY).getActor()).activated = false;	                            		
-
-				                                    // Active new tile
-				                                    //tiles[i][j].activated = true;
-				                            		//((Tile) gameArea.getCells().get(i).getActor()).activated = true;
-				                            		((Tile)event.getListenerActor()).activated = true;
-				                            		tileIsActive = true;
-				                                    //activeX = i;
-				                                    //activeY = j;
-				                            		activeXY =  gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true);				                            				
-
-				                                    clickDelayCounter = 0;
-
-				                                    //System.out.println("Activated: " + i + " " + j);
-				                                    System.out.println("Activated: " + activeXY + " ");
-
-				                                }
-
-				                            }
-
-				                       // }
-				                    }
-				              //  }
-
-				         //   }
-				            //end
-							return false;
-						}				    				
-	    			}); 			
-	    		}
-
-	        }
+	        }	        	       
 
 	        // Detect Matches
 	        if (gameState == MATCH_STATE) {
 	            detectMatches();
 	        }
-
+	        
 	        // Tiles Falling
 	        if (gameState == FALL_STATE) {
-	          //  tilesFalling();
 	        	tilesFall();
-	        	if (matched) { /** trava de alguma forma **/
-	        		gameState = IDLE_STATE;		        	
+	        	if (matched) // match-(2+1)	
 	        		logicBattleState = GameScreen.GAME_IDLE;		    			        
-	        	} else { //combined	        		
-	        		gameState = IDLE_STATE;
-//	        		gameState = PLAYER_STATE;
-	        		logicBattleState = GameScreen.ENEMY_ATTACK;
-//	        		logicBattleState = GameScreen.GAME_CONTINUE;
-	        	}
+	        	else //combined (2)	        		
+	        		logicBattleState = GameScreen.ENEMY_ATTACK;	        	
+	        	gameState = IDLE_STATE;
+	        	//gameState = PLAYER_STATE;	        	
 	        	matched = false;
 	        	combined = false;	    		
 	        }
@@ -442,7 +311,7 @@ public class Logic {
 	/**
 	 * 
 	 */
-	public void detectMatches() {
+	private void detectMatches() {
 
 	        if (matched || combined) {
 	            gameState = FALL_STATE;
@@ -456,7 +325,7 @@ public class Logic {
 	/**
 	 * 
 	 */
-	public void tilesFall() {				
+	private void tilesFall() {				
 		for (int i = 0; i < (sizeAreaW*sizeAreaH); i++) {
 			if (((Tile) gameArea.getCells().get(i).getActor()).destroy) {
 				int j = i;
@@ -480,174 +349,149 @@ public class Logic {
 	}
 
 	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-	public void tilesFalling() {
+}
 
-        boolean repeat = false;
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles.length; j++) {
-                if (tiles[i][j].type != 100) {
-                    if ((j - 1) >= 0) {
-                        if (tiles[i][j - 1].type == 100) {
+//evento do click no tile 
+/* 	      
+for (int i = 0; i < gameArea.getCells().size; i++) {								
+	gameArea.getCells().get(i).getActor().addListener(new EventListener() {
+		@Override						
+		public boolean handle(Event event) {.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {		
+			// Simplificando o acesso aos itens
+			Tile previousTile = (Tile) gameArea.getCells().get(activeXY).getActor();
+        	Tile currentTile = (Tile) event.getListenerActor();
 
-                            // Swap Tiles
-                            savedType = tiles[i][j].type;
-                            tiles[i][j].type = tiles[i][j - 1].type;
-                            System.out.println("TIPO DO NULLPOINTER: "+tiles[i][j].type );
-                            //tiles[i][j].sprite = new Sprite(this.elementsT.get(tiles[i][j].type));
-                            
-                            tiles[i][j - 1].type = savedType;
-                            tiles[i][j - 1].sprite = new Sprite(this.elementsT.get(savedType));
+        	// Check for Tile Swap
+            //if (Gdx.input.isButtonPressed(Input.Keys.LEFT)) {
+            //if (Gdx.input.justTouched()) {
+        	if(true) {if(secondTap) {
+                //if (clickDelayCounter > clickDelayCounterLength) {        						            	
+	            						            
+	            	// Verifica se o segundo item clicado foi do lado esquerdo
+                    if (tileIsActive) { 				                    	
+                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
+                    	if ( (activeXY % sizeAreaW) != 0 &&  ((activeXY - 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) ) {
+                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
+                            	// Verica se está a esquerda
+                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
+                                    // De-activate
+                                    tileIsActive = false;
+                                    previousTile.activated = false;
 
-                            repeat = true;
+                                    combineTile(previousTile, currentTile);				                                    
+                                    
+                                    clickDelayCounter = 0;				                                    
 
+                               // }
+                            }
                         }
                     }
-                }
-            }
-        }
+                    // Verifica se o segundo item clicado foi do lado direito
+                    if (tileIsActive) {				                    	
+                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
+                    	if ( ((activeXY+1) % sizeAreaW) != 0 && ((activeXY + 1) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) ) {
+                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
+                            	// Verica se está a esquerda
+                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
+                                    // De-activate
+                                    tileIsActive = false;
+                                    previousTile.activated = false;
 
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles.length; j++) {
-                if (tiles[i][j].type == 100) {
-                    if (j == tiles.length-1) {
-                        int type =  MathUtils.random(0,4);
-                    	tiles[i][j].type = type;
-                    	tiles[i][j].sprite = new Sprite(elementsT.get(type));
-                    	
-                        //System.out.println("Added a Tile in Row " + i);
-
-                        repeat = true;
+                                    combineTile(previousTile, currentTile);	
+                                    
+                                    clickDelayCounter = 0;
+                               // }
+                            }
+                        }
                     }
-                }
+                    // Verifica se o segundo item clicado foi em cima
+                    if (tileIsActive) {				                    	
+                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
+                    	if ((activeXY-sizeAreaW) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) {
+                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
+                            	// Verica se está a esquerda
+                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
+                                    // De-activate
+                                    tileIsActive = false;
+                                    previousTile.activated = false;
+
+                                    combineTile(previousTile, currentTile);	
+                                    
+                                    clickDelayCounter = 0;
+                               // }
+                            }
+                        }
+                    }
+                 // Verifica se o segundo item clicado foi em baixo
+                    if (tileIsActive) {				                    	
+                        //if ((activeXY%sizeAreaW) - 1 >= 0) {
+                    	if ((activeXY+sizeAreaW) == gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true)) {
+                            if ((((Tile) gameArea.getCells().get(activeXY).getActor()).type != 100) && (((Tile) event.getListenerActor()).type != 100)) {	                            
+                            	// Verica se está a esquerda
+                            	//if ((mouse_position.x > tiles[activeX - 1][activeY].x) && (mouse_position.x < tiles[activeX - 1][activeY].x + 64) && (mouse_position.y > tiles[activeX - 1][activeY].y) && (mouse_position.y < tiles[activeX - 1][activeY].y + 64)) {	                            		                            		
+                                    // De-activate
+                                    tileIsActive = false;
+                                    previousTile.activated = false;
+                                    
+                                    combineTile(previousTile, currentTile);					                                    
+                                    
+                                    clickDelayCounter = 0;
+                               // }
+                            }
+                        }
+                    }
+                    
+                    // Check for Matches
+                    gameState = MATCH_STATE;
+                    secondTap = false;
+                }				            	
             }
-        }
+			
+            //begin
+            //if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            //if (Gdx.input.justTouched()) {
+        	if(true) {if(!secondTap) {
+                //if (clickDelayCounter > clickDelayCounterLength) {	
 
-        if (repeat) {
-            tilesFalling();
-        }
+                  // for (int i = 0; i < gameArea.getCells().size; i++) { // for (int i = 0; i < tiles.length; i++) {
+                     //   for (int j = 0; j < tiles.length; j++) {	                        		                        	
+                	//   if ((mouse_position.x > ((Tile) gameArea.getCells().get(i).getActor()).getX()) && (mouse_position.x < ((Tile) gameArea.getCells().get(i).getActor()).getX() + ((Tile) gameArea.getCells().get(i).getActor()).x) 
+                //	   && (mouse_position.y > ((Tile) gameArea.getCells().get(i).getActor()).getY()) && (mouse_position.y < ((Tile) gameArea.getCells().get(i).getActor()).getY() + ((Tile) gameArea.getCells().get(i).getActor()).y)) {//if ((mouse_position.x > tiles[i][j].x) && (mouse_position.x < tiles[i][j].x + 64) && (mouse_position.y > tiles[i][j].y) && (mouse_position.y < tiles[i][j].y + 64)) {	                            	
+                            
+                            	//if (((Tile) gameArea.getCells().get(i).getActor()).type != 100) {
+                				//if (currentTile.type != 100) {
+                				if (!currentTile.destroy) {	
 
+                                    // De-activate previous tile
+                            		// tiles[activeX][activeY].activated = false;
+                            		previousTile.activated = false;	                            		
 
-        // Check for Matches
-        gameState = 1;
+                                    // Active new tile
+                                    //tiles[i][j].activated = true;
+                            		//((Tile) gameArea.getCells().get(i).getActor()).activated = true;
+                            		currentTile.activated = true;
+                            		tileIsActive = true;
+                            		secondTap = true;
+                                    //activeX = i;
+                                    //activeY = j;
+                            		activeXY =  gameArea.getCells().indexOf(gameArea.getCell(event.getListenerActor()), true);				                            				
 
-        System.out.println("Completed Tiles Falling!");
+                                    clickDelayCounter = 0;				                            		
 
-    }
-	
-	public void detectMatch3Hori() {
-		        for (int i = 0; i < tiles.length; i++) {
-		            for (int j = 0; j < tiles.length; j++) {
-		                if (tiles[i][j].type != 100) {
-		                    if ((i + 2) < tiles.length) {
-		                        if ((tiles[i][j].type == tiles[i + 1][j].type) && (tiles[i][j].type == tiles[i + 2][j].type)) {
-		                            for (int k = 0; k < 3; k++) {
-		                                tiles[i + k][j].type = 100;
-		                            }
-		                            System.out.println("Match 3 Horizontal at " + i + " " + j);
-	                        matched = true;
-	                        
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
+                                    System.out.println("Activated: " + activeXY + " ");
 
-	public void detectMatch3Vert() {
-	    for (int i = 0; i < tiles.length; i++) {
-	        for (int j = 0; j < tiles.length; j++) {
-	            if (tiles[i][j].type != 100) {
-	                if ((j + 2) < tiles.length) {
-	                    if ((tiles[i][j].type == tiles[i][j + 1].type) && (tiles[i][j].type == tiles[i][j + 2].type)) {
-	                        for (int k = 0; k < 3; k++) {
-	                            tiles[i][j + k].type = 100;
-	                        }
-	                        System.out.println("Match 3 Vertical at " + i + " " + j);
-	                        matched = true;
-	                        match.play();
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
-	
-	public void detectMatch4Hori() {
-	    for (int i = 0; i < tiles.length; i++) {
-	        for (int j = 0; j < tiles.length; j++) {
-	            if (tiles[i][j].type != 100) {
-	                if ((i + 3) < tiles.length) {
-	                    if ((tiles[i][j].type == tiles[i + 1][j].type) && (tiles[i][j].type == tiles[i + 2][j].type) && (tiles[i][j].type == tiles[i + 3][j].type)) {
-	                        for (int k = 0; k < 4; k++) {
-	                            tiles[i + k][j].type = 100;
-	                        }
-	                        System.out.println("Match 4 Horizontal at " + i + " " + j);
-	                        matched = true;
-	                        match.play();
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
-	
-	public void detectMatch4Vert() {
-	    for (int i = 0; i < tiles.length; i++) {
-	        for (int j = 0; j < tiles.length; j++) {
-	            if (tiles[i][j].type != 100) {
-	                if ((j + 3) < tiles.length) {
-	                    if ((tiles[i][j].type == tiles[i][j + 1].type) && (tiles[i][j].type == tiles[i][j + 2].type) && (tiles[i][j].type == tiles[i][j + 3].type)) {
-	                        for (int k = 0; k < 4; k++) {
-	                            tiles[i][j + k].type = 100;
-	                        }
-	                        System.out.println("Match 4 Vertical at " + i + " " + j);
-	                        matched = true;
-	                        match.play();
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
-	
-	public void detectMatch5Hori() {
-	    for (int i = 0; i < tiles.length; i++) {
-	        for (int j = 0; j < tiles.length; j++) {
-	            if (tiles[i][j].type != 100) {
-	                if ((i + 4) < tiles.length) {
-	                    if ((tiles[i][j].type == tiles[i + 1][j].type) && (tiles[i][j].type == tiles[i + 2][j].type) && (tiles[i][j].type == tiles[i + 3][j].type) && (tiles[i][j].type == tiles[i + 4][j].type)) {
-	                        for (int k = 0; k < 5; k++) {
-	                            tiles[i + k][j].type = 100;
-	                        }
-	                        System.out.println("Match 5 Horizontal at " + i + " " + j);
-	                        matched = true;
-	                        match.play();
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
-	
-	public void detectMatch5Vert() {
-	    for (int i = 0; i < tiles.length; i++) {
-	        for (int j = 0; j < tiles.length; j++) {
-	            if (tiles[i][j].type != 100) {
-	                if ((j + 4) < tiles.length) {
-	                    if ((tiles[i][j].type == tiles[i][j + 1].type) && (tiles[i][j].type == tiles[i][j + 2].type) && (tiles[i][j].type == tiles[i][j + 3].type) && (tiles[i][j].type == tiles[i][j + 4].type)) {
-	                        for (int k = 0; k < 5; k++) {
-	                            tiles[i][j + k].type = 100;
-	                        }
-	                        System.out.println("Match 5 Vertical at " + i + " " + j);
-	                        matched = true;
-	                        match.play();
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
-*/ 
-}
+                                } 
+                            }
+
+                       // }
+                    }
+              //  }
+
+         //   }
+            //end
+			//return false;
+		}				    				
+	}); 			
+}*/

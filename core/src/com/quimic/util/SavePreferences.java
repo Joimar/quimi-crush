@@ -8,7 +8,11 @@ public class SavePreferences {
 	private static final String PREF_SOUND_VOL = "sound";
 	private static final String PREF_MUSIC_ENABLED = "music.enabled";
 	private static final String PREF_SOUND_ENABLED = "sound.enabled";	
+	
 	private static final String PREFS_NAME = "quimiCrushSaves";
+	
+	private static final String SAVE_LEVEL_PASS = "level.pass";
+	
 	
 	private Preferences preferences; // As preferencias (ajustes do jogador)
 	
@@ -51,6 +55,15 @@ public class SavePreferences {
  
 	public void setSoundVolume(float volume) {
 		getPrefs().putFloat(PREF_SOUND_VOL, volume);
+		getPrefs().flush();
+	}
+	
+	public int getLevelPass() {
+		return getPrefs().getInteger(SAVE_LEVEL_PASS, 0);
+	}
+ 
+	public void setLevelPass(int level) {
+		getPrefs().putInteger(SAVE_LEVEL_PASS, level);
 		getPrefs().flush();
 	}
 }

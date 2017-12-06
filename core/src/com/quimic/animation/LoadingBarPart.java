@@ -15,6 +15,8 @@ public class LoadingBarPart extends Actor {
 	private Animation     animation;
 	private float         stateTime;
 	private TextureRegion currentFrame;		
+	private int x = 64;
+	private int y= 118;
 	
 	/**
 	 * 
@@ -34,15 +36,16 @@ public class LoadingBarPart extends Actor {
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);				
 		//batch.draw(atlasRegion, getX(), getY(), 30, 30);
-		//batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-		batch.draw(currentFrame, getX(), getY(), 64, 118);		
+		//batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);		
+		batch.draw(currentFrame, getX()-x/2, getY(), x, y);
 		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		stateTime += delta; // Accumulate elapsed animation time		
-	    currentFrame = (TextureRegion) animation.getKeyFrame(stateTime, true);  //new
+		stateTime += delta; // Accumulate elapsed animation time
+		if (!animation.isAnimationFinished(stateTime))
+			currentFrame = (TextureRegion) animation.getKeyFrame(stateTime, true);  //new
 	}
 }
