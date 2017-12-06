@@ -1,11 +1,9 @@
 package com.quimic.view;
 
+import java.awt.TextArea;
+import java.awt.TextField;
 import java.util.ArrayList;
 
-import javax.print.attribute.standard.Finishings;
-import javax.xml.stream.events.EndElement;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -25,14 +23,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.quimic.game.QuimiCrush;
@@ -72,6 +75,7 @@ abstract public class GameScreen implements Screen {
 	public static final int GAME_CONTINUE = 21;
 	public static final int GAME_WIN      = 22;
 	public static final int GAME_LOSE     = 23;
+	public static final int GAME_END 	  = 24;
 	
 //*************************************************************//	
 	public final float PROPORTION_WIDTH_BATTLE  = 1f;
@@ -85,8 +89,8 @@ abstract public class GameScreen implements Screen {
 	protected final int sizeMapH; // Altura da matriz do jogo
 	protected final int QTD_INFO; // Quantidade de itens para informação/ajuda do jogo
 	*/
-	protected final int LIFE_HERO  = 10; // Valores default
-	protected final int LIFE_ENEMY = 5;  // Valores default
+	protected int LIFE_HERO  = 5; // Valores default
+	protected int LIFE_ENEMY = 3;  // Valores default
 
 //*************************************************************//		
 	protected Stage          stage; // Controla e reage às entradas do usuário	
@@ -125,24 +129,18 @@ abstract public class GameScreen implements Screen {
 	protected AtlasRegion  enemy_die; //
 	protected AtlasRegion  heart; //
 	protected AtlasRegion  nonHeart; //		
-	
-	//Animation       heroIdleAnimation;	
-	protected Animation       heroAttackAnimation;
+		
+	protected Animation heroAttackAnimation;
 	//Animation       heroHealAnimation;
-	protected Animation       heroDamageAnimation;
-	protected Animation       heroDieAnimation;
-	
-	//Animation       enemyIdleAnimation;	
-	protected Animation       enemyAttackAnimation;
+	protected Animation heroDamageAnimation;
+	protected Animation heroDieAnimation;
+	protected Animation heroWinAnimation;    
+		
+	protected Animation enemyAttackAnimation;
 	//Animation       enemyHealAnimation;
-	protected Animation       enemyDamageAnimation;
-	protected Animation       enemyDieAnimation;
+	protected Animation enemyDamageAnimation;
+	protected Animation enemyDieAnimation;
 	
-	/*TextureRegion[] HeroAttackRegions;	
-	TextureRegion[] HeroDamageRegions;
-	TextureRegion[] HeroDieRegions;*/
-	
-	//HeroAnimation heroAnimation;
 	protected boolean heroAnimationFinish  = true;
 	protected boolean enemyAnimationFinish = true;
 	protected int lifeHero;
@@ -150,7 +148,12 @@ abstract public class GameScreen implements Screen {
 	protected SpriteBatch batch;
 	protected float stateTime;
 	
-	protected int battleState = GAME_CONTINUE;	
+	protected int battleState = GAME_CONTINUE;
+	
+	protected Window endGameWindow;
+	protected Label msgTitleEndGame;
+	protected Label backMainLabel;
+	protected Label replayGameLabel;
 	
 //*************************************************************//		    
 	/**
@@ -162,9 +165,7 @@ abstract public class GameScreen implements Screen {
 		
 		cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);		
 		sv = new ScreenViewport(cam);
-		stage = new Stage(sv);
-		
-		//batch = new SpriteBatch();		
+		stage = new Stage(sv);			
 		
 		elementsT = new ArrayList<Texture>();
 		// Os elementos simples da tabela		
@@ -214,47 +215,35 @@ abstract public class GameScreen implements Screen {
 		parent.assetsManager.queueAddSkin(); // Carrega as skins  
 		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
 		skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
-		
-		//this.loadAnimations();
+
+		//endGameWindow = new Window("", skin);			
+		//String msgTitleEndGame;
+		backMainLabel = new Label("Voltar ao menu", skin);
+		replayGameLabel = new Label("Jogar novamente", skin);		
+		this.endGameEventListener();
 	}
 
 	/**
 	 * 
 	 */
-	/*private void loadAnimations() {					
-		heart      = atlas.findRegion("heart"); // Captura o background da tela do loading
-		nonHeart   = atlas.findRegion("heart-bg"); // Captura o background da tela do loading
-				
-		Array<TextureRegion> regionsT;
-		// Animações do hero		
-		hero_idle = atlas.findRegion("hero_idle"); // Herói parado 
-		// ...
-		regionsT = this.addRegionsArray("attack_", 1, 4);
-		heroAttackAnimation = new Animation(0.4f, regionsT, PlayMode.NORMAL); // Atack do herói
-		// ..
-		regionsT = this.addRegionsArray("damage1_", 1, 2);
-		heroDamageAnimation = new Animation(0.5f, regionsT, PlayMode.NORMAL); // Dano no herói
-		// ...
-		regionsT = this.addRegionsArray("die_", 1, 3);
-		heroDieAnimation = new Animation(0.7f, regionsT, PlayMode.NORMAL); // Herói morto
-		hero_die = atlas.findRegion("hero_die");                           // Herói caido
+	protected void endGameEventListener() {
+		backMainLabel.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				parent.changeScreen(parent.MAIN);
+			}	   
+		});
 		
-		// Animações do enemy		
-		enemy_idle = atlas.findRegion("enemy1_idle"); // Inimigo parado
-		// ...
-		regionsT = this.addRegionsArray("enemy1_attack1_",1, 5);
-		enemyAttackAnimation = new Animation(0.4f, regionsT, PlayMode.NORMAL); // Atack inimigo
-		// ..
-		regionsT = this.addRegionsArray("enemy1_damage1_", 1, 3);
-		enemyDamageAnimation = new Animation(0.5f, regionsT, PlayMode.NORMAL); // Dano no inimigo
-		// ...
-		regionsT = this.addRegionsArray("enemy1_die_", 1, 3);
-		enemyDieAnimation = new Animation(0.7f, regionsT, PlayMode.NORMAL);	// Inimigo morto	
-		enemy_die = atlas.findRegion("enemy_die");                          // Inimigo caido
+		replayGameLabel.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				parent.changeLevel(currentLevel);
+			}	   
+		});
 	}
-	*/
 	
 	/**
+	 * Recupera a sequência de sprites númerados de '01' até um determinado número
 	 * 
 	 * @param name
 	 * @param begin
@@ -284,7 +273,7 @@ abstract public class GameScreen implements Screen {
 	}
 			
 	@Override
-	public void show() {		
+	public void show() {
 		batch = new SpriteBatch();
 		stateTime = 0;
 		
@@ -365,8 +354,7 @@ abstract public class GameScreen implements Screen {
 	}
 	
 	@Override
-	public void render(float delta) {						
-		
+	public void render(float delta) {								
 		Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -412,15 +400,31 @@ abstract public class GameScreen implements Screen {
 		
 		if (battleState == GAME_CONTINUE) {
 			logic.gameState = logic.PLAYER_STATE;
-		} else if (battleState == GAME_WIN) {			
-			// Evita que perca a última fase concluida e extrapole o número total de fases
-			if (currentLevel >= parent.getLevelPass() && currentLevel < parent.TOTAL_LEVELS)
-				parent.setLevelPass(currentLevel+1);
-			parent.changeScreen(parent.MAIN);
-		} else if (battleState == GAME_LOSE) {
-			parent.setLevelPass(0); // Calma...
-			parent.changeScreen(parent.MAIN);
+		} else if (battleState == GAME_WIN || battleState == GAME_LOSE) {			
+			if (battleState == GAME_WIN) {					
+				// Evita que perca a última fase concluida e extrapole o número total de fases
+				if (currentLevel >= parent.getLevelPass() && currentLevel < parent.TOTAL_LEVELS)
+					parent.setLevelPass(currentLevel+1);			
+				msgTitleEndGame = new Label(":) Bom trabalho!", skin, "xp");		
+			} else if (battleState == GAME_LOSE) {				
+				msgTitleEndGame = new Label(":( Nao desista!", skin, "err");
+			}	
+			
+			battleState = GAME_END;			
+			endGameWindow = new Window("", skin);
+			
+			endGameWindow.add(msgTitleEndGame).top().center().padBottom(40);
+			endGameWindow.row().bottom();				
+			endGameWindow.add(replayGameLabel).pad(20);
+			endGameWindow.row();
+			endGameWindow.add(backMainLabel);
+			
+			stage.addActor(endGameWindow);
+			endGameWindow.setPosition(0, 0);
+			endGameWindow.setSize(parent.windowWidth, parent.windowHeight*PROPORTION_HEIGHT_GAME);
 		}
+		
+		
 	}
 	
 	/**
@@ -432,7 +436,7 @@ abstract public class GameScreen implements Screen {
 				
 		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-2).getActorHeight();   
 		
-		if (heroAnimationFinish) { // hero.idle
+		if (heroAnimationFinish && battleState != GAME_END) { // hero.idle
 			if (lifeHero <= 0)
 				batch.draw(hero_die, x, y);
 			else
@@ -476,13 +480,20 @@ abstract public class GameScreen implements Screen {
 				stateTime = 0;
 			}
 		}
-		
-		// Desenhar a vida do herói
-		for (int heartFill = 0; heartFill < lifeHero; heartFill++) { // Desenha os corações cheios
-			batch.draw(heart, x - heartFill*heart.getRegionWidth(), yHeart);
-		}
-		for (int heartNFill = LIFE_HERO; heartNFill > lifeHero && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
-			batch.draw(nonHeart, x - (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
+				
+		if (battleState != GAME_END) {
+			// Desenhar a vida do herói
+			for (int heartFill = 0; heartFill < lifeHero; heartFill++) { // Desenha os corações cheios
+				batch.draw(heart, x - heartFill*heart.getRegionWidth(), yHeart);
+			}
+			for (int heartNFill = LIFE_HERO; heartNFill > lifeHero && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
+				batch.draw(nonHeart, x - (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
+			}
+		} else {
+			if (lifeHero > 0)
+				batch.draw((TextureRegion) heroWinAnimation.getKeyFrame(stateTime, true), x, y);
+			else 
+				batch.draw(hero_die, x, y);
 		}
 	}
 	
@@ -495,15 +506,15 @@ abstract public class GameScreen implements Screen {
 
 		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-1).getActorHeight();
 		
-		if (enemyAnimationFinish) { // enemy.idle
+		if (enemyAnimationFinish && battleState != GAME_END) { // enemy.idle
 			if (lifeEnemy <= 0)
 				batch.draw(enemy_die, x, y);
 			else
 				batch.draw(enemy_idle, x, y);			
 			
 		} else if (battleState == ENEMY_ATTACK) { // ATTACK						
-			if (! enemyAttackAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
-				batch.draw((TextureRegion) enemyAttackAnimation.getKeyFrame(stateTime, true), x, y);								
+			if (! enemyAttackAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou				
+				batch.draw((TextureRegion) enemyAttackAnimation.getKeyFrame(stateTime, true), x-20f, y); // Avanço do inimigo e atack								
 			} else { 				
 				battleState = HERO_DAMAGE;								
 				heroAnimationFinish = false;
@@ -538,12 +549,19 @@ abstract public class GameScreen implements Screen {
 			}
 		}
 		
-		// Desenhar a vida do inimigo
-		for (int heartFill = 0; heartFill < lifeEnemy; heartFill++) { // Desenha os corações cheios
-			batch.draw(heart, x + heartFill*heart.getRegionWidth(), yHeart);
-		}
-		for (int heartNFill = LIFE_ENEMY; heartNFill > lifeEnemy && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
-			batch.draw(nonHeart, x-1 + (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
+		if (battleState != GAME_END) {
+			// Desenhar a vida do inimigo
+			for (int heartFill = 0; heartFill < lifeEnemy; heartFill++) { // Desenha os corações cheios
+				batch.draw(heart, x + heartFill*heart.getRegionWidth(), yHeart);
+			}
+			for (int heartNFill = LIFE_ENEMY; heartNFill > lifeEnemy && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
+				batch.draw(nonHeart, x-1 + (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
+			}
+		} else {
+			if (lifeEnemy > 0)
+				batch.draw(enemy_idle, x, y);
+			else
+				batch.draw(enemy_die, x, y);								
 		}
 	}
 	

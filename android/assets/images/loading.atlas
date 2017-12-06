@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 attack_02
   rotate: false
-  xy: 525, 131
+  xy: 849, 741
   size: 28, 42
   orig: 28, 42
   offset: 0, 0
@@ -34,56 +34,56 @@ bowl_01
   index: -1
 bowl_02
   rotate: false
-  xy: 803, 785
+  xy: 203, 41
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 bowl_03
   rotate: false
-  xy: 869, 905
+  xy: 803, 785
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 bowl_04
   rotate: false
-  xy: 269, 41
+  xy: 869, 905
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 bowl_05
   rotate: false
-  xy: 203, 41
+  xy: 269, 41
   size: 64, 118
   orig: 64, 118
   offset: 0, 0
   index: -1
 damage1_01
   rotate: false
-  xy: 490, 131
+  xy: 527, 131
   size: 33, 42
   orig: 33, 42
   offset: 0, 0
   index: -1
 damage1_02
   rotate: false
-  xy: 458, 116
+  xy: 562, 130
   size: 30, 43
   orig: 30, 43
   offset: 0, 0
   index: -1
 attack_01
   rotate: false
-  xy: 458, 116
+  xy: 562, 130
   size: 30, 43
   orig: 30, 43
   offset: 0, 0
   index: -1
 attack_04
   rotate: false
-  xy: 458, 116
+  xy: 562, 130
   size: 30, 43
   orig: 30, 43
   offset: 0, 0
@@ -188,14 +188,14 @@ enemy1_idle
   index: -1
 enemy1_die_01
   rotate: false
-  xy: 849, 738
+  xy: 594, 128
   size: 30, 45
   orig: 30, 45
   offset: 0, 0
   index: -1
 enemy1_die_02
   rotate: false
-  xy: 419, 117
+  xy: 488, 131
   size: 37, 42
   orig: 37, 42
   offset: 0, 0
@@ -310,6 +310,20 @@ hero_idle
   xy: 985, 915
   size: 34, 45
   orig: 34, 45
+  offset: 0, 0
+  index: -1
+hero_win_01
+  rotate: false
+  xy: 455, 114
+  size: 31, 45
+  orig: 31, 45
+  offset: 0, 0
+  index: -1
+hero_win_02
+  rotate: false
+  xy: 419, 112
+  size: 34, 47
+  orig: 34, 47
   offset: 0, 0
   index: -1
 logo

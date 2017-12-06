@@ -23,6 +23,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 1
 	}
+	red: {
+		r: 0.77666664
+		g: 0.03529522
+		b: 0.03529522
+		a: 1
+	}
 	white: {
 		r: 1
 		g: 1
@@ -81,6 +87,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	xp: {
 		font: bold
 		fontColor: green
+	}
+	err: {
+		font: bold
+		fontColor: red
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {

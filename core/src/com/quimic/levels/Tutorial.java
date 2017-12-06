@@ -28,9 +28,6 @@ public class Tutorial extends GameScreen {
 	// Atributos do SUPER
     
 //*************************************************************//   
-	private final int LIFE_HERO  = 10;
-	private final int LIFE_ENEMY = 5;
-
 	private final int sizeMapW = 6; // Largura da matriz do jogo
 	private final int sizeMapH = 6; // Altura da matriz do jogo
 	private final int QTD_INFO = 4; // Quantidade de itens para informação/ajuda do jogo
@@ -84,7 +81,9 @@ public class Tutorial extends GameScreen {
 
 	public Tutorial(QuimiCrush parent) {				
 	    super(parent);
-		
+		LIFE_HERO = 8;
+		LIFE_ENEMY = 4;
+	    
 	    noobStage = new Stage(stage.getViewport()); // Cria o palco para a etapa de história e tutorial
 	    
 		WIDTH_TILE  = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW; // Configura a largura do bloco que contem o componente químico
@@ -141,6 +140,9 @@ public class Tutorial extends GameScreen {
 		regionsT = this.addRegionsArray("die_", 1, 3);
 		heroDieAnimation = new Animation(0.7f, regionsT, PlayMode.NORMAL); // Herói morto
 		hero_die = atlas.findRegion("hero_die");                           // Herói caido
+		// ...
+		regionsT = this.addRegionsArray("hero_win_", 1, 2); 
+		heroWinAnimation = new Animation(0.4f, regionsT, PlayMode.LOOP); // Pose da vitória
 		
 		// Animações do enemy		
 		enemy_idle = atlas.findRegion("enemy1_idle"); // Inimigo parado
@@ -383,7 +385,11 @@ public class Tutorial extends GameScreen {
 		// Criação das tiles -> os componentes químicos
 		for (int i = 0; i < sizeMapW; i++) {
 			for (int j = 0; j < sizeMapH; j++) {
-				int type = MathUtils.random(0,4);
+				int type;
+				/*if (((i+i)*(j+1))%(i+j+MathUtils.random(0,9)) == 0)
+					type = O;
+				else */
+					type = MathUtils.random(0,4);
 				Tile newTile = new Tile(new Sprite(elementsT.get(type)), type, WIDTH_TILE, HEIGHT_TILE);				
 	            tiles[i][j] = newTile;	            
 		    }
@@ -442,9 +448,9 @@ public class Tutorial extends GameScreen {
 	public void render(float delta) {
 		//long time = System.currentTimeMillis();
 		
-		if (!(historyScene || tutorialScene)) 
-			super.render(delta);
-		else {
+		if (!(historyScene || tutorialScene)) { 
+			super.render(delta);			
+		} else {
 			Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
 			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);						
