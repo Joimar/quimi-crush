@@ -37,7 +37,11 @@ public class Logic {
 	
 	public Loader assetsManager;
 	public Sound combineSound;
-	public Sound matchSound;
+	public Sound waterSound;
+	public Sound smokeSound;
+	public Sound glassSound;
+	public Sound laughSound;
+	//public Sound matchSound;
 	
 	//
 	public int windowWidth = Gdx.graphics.getWidth();
@@ -87,9 +91,17 @@ public class Logic {
 		assetsManager.finishLoading();
 		// loads the 2 sounds we use
 		combineSound = assetsManager.MANAGER.get(assetsManager.COMBINE_SOUND, Sound.class);
-		matchSound = assetsManager.MANAGER.get(assetsManager.MATCH_SOUND, Sound.class);				
-		
-		matchSound.setVolume(0, parent.savePreferences.getSoundVolume());
+		//matchSound = assetsManager.MANAGER.get(assetsManager.MATCH_SOUND, Sound.class);	
+		waterSound = assetsManager.MANAGER.get(assetsManager.WATER_ATTACK_SOUND, Sound.class);
+		smokeSound = assetsManager.MANAGER.get(assetsManager.CARBON_ATTACK_SOUND, Sound.class);
+		glassSound = assetsManager.MANAGER.get(assetsManager.GLASS_ATTACK_SOUND, Sound.class);
+		laughSound = assetsManager.MANAGER.get(assetsManager.LAUGH_ATTACK_SOUND, Sound.class);
+	
+		//matchSound.setVolume(0, parent.savePreferences.getSoundVolume());
+		waterSound.setVolume(0, parent.savePreferences.getSoundVolume());
+		smokeSound.setVolume(0, parent.savePreferences.getSoundVolume());
+		glassSound.setVolume(0, parent.savePreferences.getSoundVolume());
+		laughSound.setVolume(0, parent.savePreferences.getSoundVolume());
 		combineSound.setVolume(0, parent.savePreferences.getSoundVolume());
 		soundEffects = parent.savePreferences.isSoundEffectsEnabled();
 		
@@ -118,6 +130,11 @@ public class Logic {
 		matched = false;
 		combined = false;
 		
+		boolean h2oSound=false;
+		boolean co2Sound=false;
+		boolean n2oSound=false;		
+		boolean na2oSound=false;			
+		
 		if (previous.type == GameScreen.H && current.type == GameScreen.H) {
 			current.type = GameScreen.H2;
 			current.sprite = new Sprite(elementsT.get(GameScreen.H2));		
@@ -135,22 +152,35 @@ public class Logic {
 			current.sprite = new Sprite(elementsT.get(GameScreen.Na2));
 			combined = true;
 		} else if ((previous.type == GameScreen.H2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.H2)) {
-			matched = true;
+			matched = true;			
 			current.destroy = true;
+			h2oSound = true;
 		} else if ((previous.type == GameScreen.C && current.type == GameScreen.O2) || (previous.type == GameScreen.O2 && current.type == GameScreen.C)) {
 			matched = true;
 			current.destroy = true;
+			co2Sound = true;
 		} else if ((previous.type == GameScreen.N2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.N2)) {
 			matched = true;
 			current.destroy = true;
+			n2oSound = true;
 		} else if ((previous.type == GameScreen.Na2 && current.type == GameScreen.O) || (previous.type == GameScreen.O && current.type == GameScreen.Na2)) {
 			matched = true;
 			current.destroy = true;
+			na2oSound = true;
 		}
 		
 		if (matched) {
-			if (soundEffects)
-            	matchSound.play();
+			if (soundEffects) {
+            	if (h2oSound) {
+            		waterSound.play();
+            	} else if (co2Sound) {
+            		smokeSound.play();
+            	} else if (n2oSound) {
+            		laughSound.play();
+            	} else if (na2oSound) {
+            		glassSound.play();
+            	}
+			}
 		} else {
 			if (combined)
             	combineSound.play();		
@@ -300,8 +330,7 @@ public class Logic {
 	        		logicBattleState = GameScreen.GAME_IDLE;		    			        
 	        	else //combined (2)	        		
 	        		logicBattleState = GameScreen.ENEMY_ATTACK;	        	
-	        	gameState = IDLE_STATE;
-	        	//gameState = PLAYER_STATE;	        	
+	        	gameState = IDLE_STATE;      	
 	        	matched = false;
 	        	combined = false;	    		
 	        }

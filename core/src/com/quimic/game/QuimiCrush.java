@@ -33,7 +33,7 @@ public class QuimiCrush extends Game {
     public Music           playingSong;
     
 //*************************************************************//    
-    public final int TOTAL_LEVELS = 10; // Quantidade de fases do jogo (contando com o tutorial)
+    public final int TOTAL_LEVELS = 10; // Quantidade de fases do jogo (contando com o tutorial); de 0 -> (TOTAL_LEVELS-1)
     private int levelPass;
     
 //*************************************************************//    

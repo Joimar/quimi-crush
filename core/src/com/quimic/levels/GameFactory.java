@@ -33,11 +33,11 @@ public class GameFactory {
 	public GameScreen getGameLevelScreen() {
 		GameScreen screenLevel = null;
 		switch (currentLevel) {								
-			case 1:
+			case 0:
 				screenLevel = new Tutorial(parent);				
 				break;
 			default:			
-				screenLevel = new Tutorial(parent);
+				screenLevel = new Level1(parent);
 				break;
 		}
 		screenLevel.setCurrentLevel(currentLevel);

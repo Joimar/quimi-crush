@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -26,11 +27,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -86,14 +89,14 @@ abstract public class GameScreen implements Screen {
 	public final float PROPORTION_HEIGHT_GAME   = 0.65f;	
 	
 	/*protected final int sizeMapW; // Largura da matriz do jogo
-	protected final int sizeMapH; // Altura da matriz do jogo
-	protected final int QTD_INFO; // Quantidade de itens para informação/ajuda do jogo
-	*/
-	protected int LIFE_HERO  = 5; // Valores default
-	protected int LIFE_ENEMY = 3;  // Valores default
+	protected final int sizeMapH; // Altura da matriz do jogo */
+	protected int QTD_INFO   = 4; // Valor default da quantidade de itens para informação/ajuda do jogo
+	protected int LIFE_HERO  = 5; // Valores default da vida maxima do heroi
+	protected int LIFE_ENEMY = 3;  // Valores default da vida maxima do inimigo
 
 //*************************************************************//		
 	protected Stage          stage; // Controla e reage às entradas do usuário	
+	protected Stage          stageInfo; // Controla e reage às entradas do usuário para a tela de informações
 	protected ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un	
 	protected OrthographicCamera cam;
 			
@@ -112,13 +115,39 @@ abstract public class GameScreen implements Screen {
 	
 	protected Skin skin;
 	
+	protected int battleState = GAME_CONTINUE;
+	
+	protected Window endGameWindow;
+	protected Label msgTitleEndGame;
+	protected Label backMainLabel;
+	protected Label replayGameLabel;
+	
+//*************************************************************//
+	protected boolean isInfoScreen;
+		
+	protected int pageInfo;
+	
+	protected Window infoWindow;
+	
+	protected Label msgTitleInfo;	
+	protected Label backInfo;
+	protected Label nextInfo;
+	protected Label closeInfo;
+	
+	protected Table tableH2O;
+	protected Table tableCO2;
+	protected Table tableN2O;
+	protected Table tableNa2O;
+	
 //*************************************************************//			
 	protected ArrayList<Texture> elementsTSelected;	
 	protected ArrayList<Texture> elementsT;	
 	protected Tile[][] tiles;
-	protected Tile[] tilesInfo;
+	//protected Tile[] tilesInfo;
 	
 	protected Label infoLabel;
+	protected Label preferencesLabel;
+	protected Label mainLobbyLabel;
 	protected TextureAtlas atlas; // Empacotamento das imagens 			
 	protected AtlasRegion  background; //
 	protected AtlasRegion  fieldBattle; //
@@ -147,13 +176,9 @@ abstract public class GameScreen implements Screen {
 	protected int lifeEnemy;	
 	protected SpriteBatch batch;
 	protected float stateTime;
-	
-	protected int battleState = GAME_CONTINUE;
-	
-	protected Window endGameWindow;
-	protected Label msgTitleEndGame;
-	protected Label backMainLabel;
-	protected Label replayGameLabel;
+
+//*************************************************************//			
+	protected ShapeRenderer blockRect;
 	
 //*************************************************************//		    
 	/**
@@ -165,7 +190,8 @@ abstract public class GameScreen implements Screen {
 		
 		cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);		
 		sv = new ScreenViewport(cam);
-		stage = new Stage(sv);			
+		stage = new Stage(sv);
+		stageInfo = new Stage(sv); // Palco para o catalogo de combinações
 		
 		elementsT = new ArrayList<Texture>();
 		// Os elementos simples da tabela		
@@ -216,6 +242,10 @@ abstract public class GameScreen implements Screen {
 		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
 		skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
 
+		// Configura o componente que ira desenhar uma região escura na tela enquanto não for o turno do jogador  
+		blockRect = new ShapeRenderer();
+		blockRect.setColor(new Color(0, 0, 0, 0.5f));					
+		
 		//endGameWindow = new Window("", skin);			
 		//String msgTitleEndGame;
 		backMainLabel = new Label("Voltar ao menu", skin);
@@ -300,14 +330,23 @@ abstract public class GameScreen implements Screen {
 		background = atlas.findRegion("background"); // Captura o background da tela do loading	
 		fieldBattle = atlas.findRegion("fieldBattle"); // Captura o background da tela do loading		
 		
-		infoLabel       = new Label("?", skin, "title");	
-				
+		// Opções da area de informaçoes -> menu lateral
+		infoLabel        = new Label("?", skin, "title");
+		preferencesLabel = new Label("#", skin, "title");
+		mainLobbyLabel   = new Label("=", skin, "title");
+		
+		preferencesLabel.setBounds(preferencesLabel.getX(), preferencesLabel.getY(), preferencesLabel.getWidth()*0.5f, preferencesLabel.getHeight()*0.5f);
+		
 		view.top();
 		view.add(battle).expandX().colspan(2);
 		view.row().left().bottom();
 		view.add(game);
 		view.right();				
-		info.add(infoLabel);							
+		info.add(infoLabel);		
+		info.row();
+		//info.add(preferencesLabel);
+		//info.row();
+		info.add(mainLobbyLabel);
 		
 	/*	// BATTLE
 		lifeHero  = LIFE_HERO;
@@ -345,6 +384,213 @@ abstract public class GameScreen implements Screen {
 	}
 	
 	/**
+	 * 
+	 */
+	protected void infoGamePanelAction() {			
+		infoLabel.addListener(new TextTooltip("Manual de combinacoes", skin));
+		preferencesLabel.addListener(new TextTooltip("Tela de ajustes", skin));
+		mainLobbyLabel.addListener(new TextTooltip("Ir para o menu principal", skin));
+		
+		pageInfo = 1;		
+		
+		infoWindow   = new Window("Manual", skin);	
+		infoWindow.getTitleLabel().setColor(0.9f, 0.9f, 0.5f, 1f);
+		infoWindow.setBounds(0, 0, parent.windowWidth, parent.windowHeight-10);
+		
+		msgTitleInfo = new Label("Agua", skin, "bold");
+		backInfo     = new Label("<", skin, "title");
+		nextInfo     = new Label(">", skin, "title");
+		closeInfo    = new Label("x", skin, "title");
+		
+		this.createInfosIn();
+
+		infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+		infoWindow.row();
+		infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+		infoWindow.row().bottom();
+		infoWindow.add(tableH2O).colspan(3).top().expand().pad(10);
+		infoWindow.row();
+		infoWindow.add(backInfo).bottom().left().expandX().padLeft(15);
+		infoWindow.add(closeInfo).bottom().expandX().padLeft(5).padRight(5);
+		infoWindow.add(nextInfo).bottom().right().expandX().padRight(15);
+		
+		stageInfo.addActor(infoWindow);				
+		
+		// Ir para o menu principal do jogo
+		mainLobbyLabel.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {													
+				new Dialog("", skin) {
+					{
+						text("Abandonar fase?");						
+						button("nao", "n");
+						button("sim", "s");
+						this.setMovable(false);
+					}
+					
+					@Override
+					protected void result(final Object object) {
+						if (object.toString().equals("s")) 
+							parent.changeScreen(parent.MAIN);
+					}
+				}.show(stage).setWidth(parent.windowWidth);;				
+			}		   
+		});
+		
+		// Evento para mostrar as combinações possíveis no jogo
+		infoLabel.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {													
+				isInfoScreen = true;
+				Gdx.input.setInputProcessor(stageInfo);
+			}		   
+		});
+		// Evento para fechar a página de informações
+		closeInfo.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {													
+				isInfoScreen = false;
+				Gdx.input.setInputProcessor(stage);
+			}		   
+		});
+		// Evento para ir para o proximo catalogo de combinações
+		backInfo.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {													
+				if ((pageInfo-1) <= 0)
+					return;			
+				infoWindow.clear();				
+				switch (--pageInfo) {
+					case 1:
+						msgTitleInfo.setText("Agua");
+						infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+						infoWindow.row();
+						infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+						infoWindow.row().bottom();
+						infoWindow.add(tableH2O).colspan(3).top().expand().pad(10);
+						break;
+					case 2:
+						msgTitleInfo.setText("Gas Carbonico");
+						infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+						infoWindow.row();
+						infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+						infoWindow.row().bottom();
+						infoWindow.add(tableCO2).colspan(3).top().expand().pad(10);
+						break;
+					case 3:	
+						msgTitleInfo.setText("Oxido Nitroso");
+						infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+						infoWindow.row();
+						infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+						infoWindow.row().bottom();
+						infoWindow.add(tableN2O).colspan(3).top().expand().pad(10);
+						break;								
+				}
+				infoWindow.row();
+				infoWindow.add(backInfo).bottom().left().expandX().padLeft(10);
+				infoWindow.add(closeInfo).bottom().expandX().padLeft(5).padRight(5);
+				infoWindow.add(nextInfo).bottom().right().expandX().padRight(10);
+			}		   
+		});
+		// Evento para ir à pagina anterior do catalogo de combinações		
+		nextInfo.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {				
+				if ((pageInfo+1) > QTD_INFO)
+					return;			
+				infoWindow.clear();				
+				switch (++pageInfo) {
+					case 2:	
+						msgTitleInfo.setText("Gas Carbonico");
+						infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+						infoWindow.row();
+						infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+						infoWindow.row().bottom();
+						infoWindow.add(tableCO2).colspan(3).top().expand().pad(10);						
+						break;
+					case 3:	
+						msgTitleInfo.setText("Oxido Nitroso");
+						infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+						infoWindow.row();
+						infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+						infoWindow.row().bottom();
+						infoWindow.add(tableN2O).colspan(3).top().expand().pad(10); 
+						break;
+					case 4:
+						msgTitleInfo.setText("Oxido de Sodio");
+						infoWindow.add(msgTitleInfo).colspan(3).top().expand();
+						infoWindow.row();
+						infoWindow.add(pageInfo+"/"+QTD_INFO).colspan(3).top().expand();
+						infoWindow.row().bottom();						
+						infoWindow.add(tableNa2O).colspan(3).top().expand().pad(10);					
+						break;														
+				}
+				infoWindow.row();
+				infoWindow.add(backInfo).bottom().left().expandX().padLeft(10);
+				infoWindow.add(closeInfo).bottom().expandX().padLeft(5).padRight(5);
+				infoWindow.add(nextInfo).bottom().right().expandX().padRight(10);
+			}		   
+		});
+	}
+	
+	/**
+	 * Cria as páginas com informações sobre as combinações e sobre os compostos quimicos
+	 */
+	protected void createInfosIn() {
+		tableH2O = new Table(skin);  // 1 	
+		tableH2O.add(new Image(elementsT.get(H)));
+		tableH2O.add("+", "title");
+		tableH2O.add(new Image(elementsT.get(H)));
+		tableH2O.add("}", "title");
+		tableH2O.add(new Image(elementsT.get(H2)));
+		tableH2O.row().pad(5);
+		tableH2O.add(new Image(elementsT.get(H2)));
+		tableH2O.add("+", "title");
+		tableH2O.add(new Image(elementsT.get(O)));
+		tableH2O.add("}", "title");
+		tableH2O.add(new Image(elementsT.get(H2O)));
+		
+		tableCO2 = new Table(skin);  // 2
+		tableCO2.add(new Image(elementsT.get(O)));
+		tableCO2.add("+", "title");
+		tableCO2.add(new Image(elementsT.get(O)));
+		tableCO2.add("}", "title");
+		tableCO2.add(new Image(elementsT.get(O2)));
+		tableCO2.row().pad(5);
+		tableCO2.add(new Image(elementsT.get(C)));
+		tableCO2.add("+", "title");
+		tableCO2.add(new Image(elementsT.get(O2)));
+		tableCO2.add("}", "title");
+		tableCO2.add(new Image(elementsT.get(CO2)));
+		
+		tableN2O = new Table(skin);  // 3
+		tableN2O.add(new Image(elementsT.get(N)));
+		tableN2O.add("+", "title");
+		tableN2O.add(new Image(elementsT.get(N)));
+		tableN2O.add("}", "title");
+		tableN2O.add(new Image(elementsT.get(N2)));
+		tableN2O.row().pad(5);
+		tableN2O.add(new Image(elementsT.get(N2)));
+		tableN2O.add("+", "title");
+		tableN2O.add(new Image(elementsT.get(O)));
+		tableN2O.add("}", "title");
+		tableN2O.add(new Image(elementsT.get(N2O)));
+		
+		tableNa2O = new Table(skin); // 4
+		tableNa2O.add(new Image(elementsT.get(Na)));
+		tableNa2O.add("+", "title");
+		tableNa2O.add(new Image(elementsT.get(Na)));
+		tableNa2O.add("}", "title");
+		tableNa2O.add(new Image(elementsT.get(Na2)));
+		tableNa2O.row().pad(5);
+		tableNa2O.add(new Image(elementsT.get(Na2)));
+		tableNa2O.add("+", "title");
+		tableNa2O.add(new Image(elementsT.get(O)));
+		tableNa2O.add("}", "title");
+		tableNa2O.add(new Image(elementsT.get(Na2O)));
+	}
+	
+	/**
 	 *  Talvez remova esse metodo por conta das classes de cada level...
 	 * @param currentLevel
 	 */
@@ -359,6 +605,13 @@ abstract public class GameScreen implements Screen {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		if (isInfoScreen) {
+			stageInfo.act();
+			stageInfo.draw();
+			
+			return;
+		} 
+			
 		// Segue o fluxo da lógica do jogo
 		logic.update();
 		
@@ -389,7 +642,16 @@ abstract public class GameScreen implements Screen {
 			logic.logicBattleState = GAME_CONTINUE;
 			stateTime = 0;
 		}
-				
+		
+		if (logic.gameState == logic.IDLE_STATE && battleState != GAME_END) {
+			Gdx.gl.glEnable(GL20.GL_BLEND);
+			blockRect.begin(ShapeRenderer.ShapeType.Filled);
+			blockRect.setColor(new Color(0, 0, 0, 0.5f));
+			blockRect.rect(0, 0, parent.windowWidth * PROPORTION_WIDTH_GAME, parent.windowHeight * PROPORTION_HEIGHT_GAME);
+			blockRect.end();
+			Gdx.gl.glDisable(GL20.GL_BLEND);
+		}
+		
 		batch.begin();
 		//System.out.println("GAMESTATE: "+battleState);
 		this.drawHero();
@@ -422,15 +684,13 @@ abstract public class GameScreen implements Screen {
 			stage.addActor(endGameWindow);
 			endGameWindow.setPosition(0, 0);
 			endGameWindow.setSize(parent.windowWidth, parent.windowHeight*PROPORTION_HEIGHT_GAME);
-		}
-		
-		
+		}		
 	}
 	
 	/**
 	 * 
 	 */
-	private void drawHero() {		
+	protected void drawHero() {		
 		float x = battle.getCells().get(battle.getCells().size-2).getActorX();
 		float y = battle.getCells().get(battle.getCells().size-2).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);				
 				
@@ -500,7 +760,7 @@ abstract public class GameScreen implements Screen {
 	/**
 	 * 
 	 */
-	private void drawEnemy() {
+	protected void drawEnemy() {
 		float x = battle.getCells().get(battle.getCells().size-1).getActorX();
 		float y = battle.getCells().get(battle.getCells().size-1).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);
 

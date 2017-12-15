@@ -20,7 +20,13 @@ public class Loader {
 	public final String LOADING_IMAGES = "images/loading.atlas";
 	// Sounds
 	public final String COMBINE_SOUND = "sounds/combine.wav";
-	public final String MATCH_SOUND = "sounds/match.wav";
+	//public final String MATCH_SOUND = "sounds/match.wav";
+
+	public final String WATER_ATTACK_SOUND = "sounds/water.mp3";
+	public final String CARBON_ATTACK_SOUND = "sounds/diCarbon.mp3";
+	public final String GLASS_ATTACK_SOUND = "sounds/glass.mp3";
+	public final String LAUGH_ATTACK_SOUND = "sounds/laugh.wav";
+	
 	// Music
 	public final String PLAYING_SONG = "music/music.mp3";
 //*************************************************************//	
@@ -67,8 +73,12 @@ public class Loader {
 	 * 
 	 */
 	public void queueAddSounds() {
-		MANAGER.load(COMBINE_SOUND, Sound.class);
-		MANAGER.load(MATCH_SOUND, Sound.class);
+		MANAGER.load(COMBINE_SOUND, Sound.class);		
+		//MANAGER.load(MATCH_SOUND, Sound.class);
+		MANAGER.load(WATER_ATTACK_SOUND, Sound.class);
+		MANAGER.load(CARBON_ATTACK_SOUND, Sound.class);
+		MANAGER.load(GLASS_ATTACK_SOUND, Sound.class);
+		MANAGER.load(LAUGH_ATTACK_SOUND, Sound.class);
 	}
 	
 	/**
