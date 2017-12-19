@@ -38,8 +38,9 @@ public class Tutorial extends GameScreen {
 //*************************************************************//
 	private Animation       animation01;
 	
-	private AtlasRegion seta; // Mão com o dedo apontando -> utilizado para o tutorial
-	private float xSeta, ySeta, offsetSeta;
+	private AtlasRegion arrow; // Mão com o dedo apontando -> utilizado para o tutorial
+	private float xArrow, yArrow, offsetArrow;
+	private float timeArrow; // Usado para deixar o dedo mais visivel ao jogador (~mexendo~)
 	
 	private int historyPart  = 0;
 	
@@ -118,8 +119,8 @@ public class Tutorial extends GameScreen {
 		this.loadHistoryAnimations(); // Carrega animações da história
 		this.loadTutorialAnimations(); // Carrega animações do tutorial						
 		
-		nextLabel = new Label("> Proximo", skin, "dim"); // Cria link para a proxima tela de historia/tutorial
-		skipLabel = new Label(">> Pular", skin, "dim");	// Cria link para pular para o fim da historia/tutorial										
+		nextLabel = new Label("> Proximo", skin); // Cria link para a proxima tela de historia/tutorial
+		skipLabel = new Label(">> Pular", skin);	// Cria link para pular para o fim da historia/tutorial										
 		this.eventsListener(); // Insere os eventos de click aos labels de 'next' e 'skip'
 		
 		// Ativando debug do palco
@@ -177,7 +178,8 @@ public class Tutorial extends GameScreen {
 	 * Carrega as imagens e animações do tutorial
 	 */
 	private void loadTutorialAnimations() {
-		seta = atlas.findRegion("dedoTutorial"); // Captura a imagem da mão com o dedo					
+		arrow = atlas.findRegion("dedoTutorial"); // Captura a imagem da mão com o dedo
+		timeArrow = 0;
 	}
 
 	/**
@@ -194,7 +196,7 @@ public class Tutorial extends GameScreen {
 				if (historyPart > 2) { // EM DESENVOLVIMENTO					
 					historyScene = false;	
 					stateTime = 0;					
-					Gdx.input.setInputProcessor(stage);
+					Gdx.input.setInputProcessor(stage);					
 				}
 								
 			}		   
@@ -206,7 +208,7 @@ public class Tutorial extends GameScreen {
 			public void clicked(InputEvent event, float x, float y) {
 				stateTime = 0;		
 				historyScene = false;											
-				Gdx.input.setInputProcessor(stage);			
+				Gdx.input.setInputProcessor(stage);				
 			}		   
 		});
 	}			
@@ -450,7 +452,8 @@ public class Tutorial extends GameScreen {
 				blockRect.end();
 				Gdx.gl.glDisable(GL20.GL_BLEND);
 			}			
-														
+						
+			timeArrow += delta;
 			if (! wait)
 				this.drawDialogTutorial();
 			this.drawTutorial();
@@ -487,7 +490,7 @@ public class Tutorial extends GameScreen {
 				endGameWindow.row().bottom();				
 				endGameWindow.add(replayGameLabel).pad(20);
 				endGameWindow.row();
-				endGameWindow.add(backMainLabel);
+				endGameWindow.add(backMainLabel);				
 				
 				stage.addActor(endGameWindow);
 				endGameWindow.setPosition(0, 0);
@@ -536,7 +539,7 @@ public class Tutorial extends GameScreen {
 				new Dialog("", skin) {
 					{
 						text("Nesta regiao\n combine os\n elementos");
-						button("continue", "");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -558,7 +561,7 @@ public class Tutorial extends GameScreen {
 				new Dialog("", skin) {
 					{
 						text("Campo de batalha");						
-						button("continue", "");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -573,14 +576,14 @@ public class Tutorial extends GameScreen {
 				break;				
 			case 2: // Mostrando a região do catalogo de informações de combinações						
 				w = (parent.windowWidth*PROPORTION_WIDTH_INFO); 
-				h = (parent.windowHeight*PROPORTION_HEIGHT_INFO)*0.5f;
+				h = (parent.windowHeight*PROPORTION_HEIGHT_INFO)*0.8f;
 				x = ((parent.windowWidth*PROPORTION_WIDTH_INFO) - w) + parent.windowWidth*PROPORTION_WIDTH_GAME; 
 				y = ((parent.windowHeight*PROPORTION_HEIGHT_INFO) - h) / 2;
 				
 				new Dialog("", skin) {
 					{
-						text("Info");
-						button("vai", "");
+						text("Ajuda\ne\nSair");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -602,7 +605,7 @@ public class Tutorial extends GameScreen {
 				new Dialog("", skin) {
 					{
 						text("Selecione o\ncomponente");
-						button("continue", "");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -622,8 +625,8 @@ public class Tutorial extends GameScreen {
 				
 				new Dialog("", skin) {
 					{
-						text("Selecione outro\ncomponente");
-						button("continue", "");
+						text("Selecione outro\ncomponente (vizinho)");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -632,7 +635,7 @@ public class Tutorial extends GameScreen {
 						new Dialog("", skin) {
 							{
 								text("Uma combinacao simples\nfara seu heroi levar dano");
-								button("continue", "");
+								button("Ok", "");
 								this.setMovable(false);
 							}
 							
@@ -650,7 +653,7 @@ public class Tutorial extends GameScreen {
 				new Dialog("", skin) {
 					{
 						text("Selecione o\ncomponente combinado");
-						button("continue", "");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -665,8 +668,8 @@ public class Tutorial extends GameScreen {
 			case 6: // Informando sobre selecionar o último componente para combinação master (match)			
 				new Dialog("", skin) {
 					{
-						text("Selecione o ultimo\ncomponente");
-						button("continue", "");
+						text("Selecione o ultimo\ncomponente para formar\num oxido");
+						button("Ok", "");
 						this.setMovable(false);
 					}
 					
@@ -675,7 +678,7 @@ public class Tutorial extends GameScreen {
 						new Dialog("", skin) {
 							{
 								text("Ao formar um oxido\nseu heroi ataca");
-								button("continue", "");
+								button("Ok", "");
 								this.setMovable(false);
 							}
 							
@@ -695,7 +698,16 @@ public class Tutorial extends GameScreen {
 	/**
 	 * 
 	 */
-	private void drawTutorial() {			
+	private void drawTutorial() {					
+		if (timeArrow >= 1f) {			
+			timeArrow = 0;
+		} else if (timeArrow < 0.5f) {
+			offsetArrow = (WIDTH_TILE*0.45f);
+		} else {
+			offsetArrow = (WIDTH_TILE*0.25f);
+		}
+			
+			
 		switch (tutorialPart) {
 			case  0: // Mostrando a região do jogo /game 
 				Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -727,39 +739,39 @@ public class Tutorial extends GameScreen {
 			case 3: break;
 			case 4: // Seta no elemento L(5) = M(1, 1) da tabela = H
 				Gdx.gl.glEnable(GL20.GL_BLEND);
-				xSeta = game.getCells().get(5).getActorX();
-				ySeta = game.getCells().get(5).getActorY();
-				offsetSeta = (WIDTH_TILE*0.45f);
-				batch.begin();
-				batch.draw(seta, xSeta + offsetSeta, ySeta, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
+				xArrow = game.getCells().get(5).getActorX();
+				yArrow = game.getCells().get(5).getActorY() + game.getCells().get(5).getActorY()*0.25f;
+				//offsetArrow = (WIDTH_TILE*0.45f);
+				batch.begin();				
+				batch.draw(arrow, xArrow + offsetArrow, yArrow - offsetArrow, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
 				batch.end();		
 				Gdx.gl.glDisable(GL20.GL_BLEND);
 				break;
 			case 5: break;
 			case 6: // Seta no elemento L(4) = M(1, 0) da tabela = H				
-				xSeta = game.getCells().get(4).getActorX();
-				ySeta = game.getCells().get(4).getActorY();
-				offsetSeta = (WIDTH_TILE*0.45f);
+				xArrow = game.getCells().get(4).getActorX();
+				yArrow = game.getCells().get(4).getActorY() + game.getCells().get(4).getActorY()*0.25f;
+				//offsetArrow = (WIDTH_TILE*0.45f);
 				batch.begin();
-				batch.draw(seta, xSeta + offsetSeta, ySeta, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
+				batch.draw(arrow, xArrow + offsetArrow, yArrow - offsetArrow, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
 				batch.end();
 				break;
 			case 7: break;
 			case 8: // Seta no elemento combinado L(4) = M(1, 0) da tabela = H2
-				xSeta = game.getCells().get(4).getActorX();
-				ySeta = game.getCells().get(4).getActorY();
-				offsetSeta = (WIDTH_TILE*0.45f);
+				xArrow = game.getCells().get(4).getActorX();
+				yArrow = game.getCells().get(4).getActorY() + game.getCells().get(4).getActorY()*0.25f;
+				//offsetArrow = (WIDTH_TILE*0.45f);
 				batch.begin();
-				batch.draw(seta, xSeta + offsetSeta, ySeta, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
+				batch.draw(arrow, xArrow + offsetArrow, yArrow - offsetArrow, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
 				batch.end();				
 				break;
 			case 9: break;
 			case 10: // Seta no elemento L(8) = M(2, 0) da tabela = O
-				xSeta = game.getCells().get(8).getActorX();
-				ySeta = game.getCells().get(8).getActorY();
-				offsetSeta = (WIDTH_TILE*0.45f);
+				xArrow = game.getCells().get(8).getActorX();
+				yArrow = game.getCells().get(8).getActorY() + game.getCells().get(8).getActorY()*0.25f;
+				//offsetArrow = (WIDTH_TILE*0.45f);
 				batch.begin();
-				batch.draw(seta, xSeta + offsetSeta, ySeta, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
+				batch.draw(arrow, xArrow + offsetArrow, yArrow - offsetArrow, WIDTH_TILE*0.6f, HEIGHT_TILE*0.6f);
 				batch.end();				
 				
 				break;

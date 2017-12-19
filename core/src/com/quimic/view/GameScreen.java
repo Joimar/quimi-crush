@@ -537,13 +537,13 @@ abstract public class GameScreen implements Screen {
 	 * Cria as páginas com informações sobre as combinações e sobre os compostos quimicos
 	 */
 	protected void createInfosIn() {
-		tableH2O = new Table(skin);  // 1 	
+		tableH2O = new Table(skin);  // 1 			
 		tableH2O.add(new Image(elementsT.get(H)));
 		tableH2O.add("+", "title");
 		tableH2O.add(new Image(elementsT.get(H)));
 		tableH2O.add("}", "title");
 		tableH2O.add(new Image(elementsT.get(H2)));
-		tableH2O.row().pad(5);
+		tableH2O.row().pad(5);	
 		tableH2O.add(new Image(elementsT.get(H2)));
 		tableH2O.add("+", "title");
 		tableH2O.add(new Image(elementsT.get(O)));

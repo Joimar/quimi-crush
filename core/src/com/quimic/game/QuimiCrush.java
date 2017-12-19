@@ -9,8 +9,8 @@ import com.quimic.view.GameScreen;
 import com.quimic.view.LoadingScreen;
 import com.quimic.view.MainScreen;
 import com.quimic.view.PreferencesScreen;
-import com.quimic.levels.GameFactory;
 import com.quimic.loader.Loader;
+import com.quimic.logic.GameFactory;
 import com.quimic.util.SavePreferences;
 
 public class QuimiCrush extends Game {

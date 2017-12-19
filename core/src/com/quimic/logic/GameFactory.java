@@ -1,9 +1,11 @@
 /**
  * 
  */
-package com.quimic.levels;
+package com.quimic.logic;
 
 import com.quimic.game.QuimiCrush;
+import com.quimic.levels.Level1;
+import com.quimic.levels.Tutorial;
 import com.quimic.view.GameScreen;
 
 /**

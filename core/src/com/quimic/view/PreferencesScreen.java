@@ -134,11 +134,11 @@ public class PreferencesScreen implements Screen {
 		back                 = new TextButton("Back", skin);		
 
 		// Cria os rótulos para a tela de ajustes
-		titleLabel       = new Label("Settings", skin);	
-		volumeMusicLabel = new Label("Music Volume", skin);
-		volumeSoundLabel = new Label("Effects Volume", skin);
-		musicOnOffLabel  = new Label("Music", skin);
-		soundOnOffLabel  = new Label("Effects", skin);
+		titleLabel       = new Label("Ajustes", skin);	
+		volumeMusicLabel = new Label("Volume Musica", skin);
+		volumeSoundLabel = new Label("Volume Efeitos", skin);
+		musicOnOffLabel  = new Label("Musica", skin);
+		soundOnOffLabel  = new Label("Efeitos", skin);
 		
 		// Organiza os botões no grid		
 		table.add(titleLabel).colspan(2);

@@ -117,7 +117,7 @@ public class MainScreen implements Screen {
 		stage.addActor(view); // Adiciona a tabela no stage	
 				
 		// Organiza botões de ajustes e opções
-		preferences = new TextButton("Settings", skin);		
+		preferences = new TextButton("Ajustes", skin);		
 		menu.add(preferences);
 			
 		// Organiza botões das fases
