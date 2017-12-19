@@ -13,8 +13,9 @@ public class Tile extends Actor {
 	public int type;
     public float x = 0;
     public float y = 0;
+    public float rotation = 0;
     public boolean activated = false;
-    public boolean destroy = false;
+    public boolean destroy = false;    
 
     public Tile(Sprite sprite, int type, float x, float y) {
         super();
@@ -44,11 +45,18 @@ public class Tile extends Actor {
 		this.sprite = sprite;
 	}
 
-
+	/**
+	 * 
+	 * @param rotation
+	 */
+	public void shake(float rotation) {		
+		this.rotation = rotation;		
+	}
+	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		super.draw(batch, parentAlpha);				
-		batch.draw(sprite, getX(), getY(), x, y);			
+		super.draw(batch, parentAlpha);
+		batch.draw(sprite, getX(), getY(), x/2, y/2, x, y, 1f, 1f, rotation);
 		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	

@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -220,7 +221,7 @@ public class Tutorial extends GameScreen {
 		for (int i = 0; i < game.getCells().size; i++) {
 			game.getCells().get(i).getActor().addListener(new ClickListener() {
 				@Override
-				public void clicked(InputEvent event, float x, float y) {
+				public void clicked(InputEvent event, float x, float y) {															
 					// Simplificando o acesso aos itens
 					Tile previousTile = (Tile) game.getCells().get(logic.activeXY).getActor();
 					Tile currentTile = (Tile) event.getListenerActor();
@@ -325,9 +326,39 @@ public class Tutorial extends GameScreen {
 	}
 
 	@Override
+	public void infoGamePanelAction() {
+		infoLabel.addListener(new TextTooltip("Bloqueado no tutorial", skin));
+		preferencesLabel.addListener(new TextTooltip("Tela de ajustes", skin));
+		mainLobbyLabel.addListener(new TextTooltip("Ir para o menu principal", skin));					
+		
+		// Ir para o menu principal do jogo
+		mainLobbyLabel.addListener(new ClickListener() {			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				menuFront = true;
+				new Dialog("", skin) {
+					{
+						text("Abandonar fase?");						
+						button("nao", "n");
+						button("sim", "s");
+						this.setMovable(false);
+					}
+					
+					@Override
+					protected void result(final Object object) {
+						menuFront = false;
+						if (object.toString().equals("s")) 
+							parent.changeScreen(parent.MAIN);
+					}
+				}.show(stage).setWidth(parent.windowWidth);;				
+			}		   
+		});			
+	}
+	
+	@Override
 	public void show() {
 		super.show();
-		//infoGamePanelAction();
+		infoGamePanelAction();
 		
 		noobStage.clear();
 		Gdx.input.setInputProcessor(noobStage);			
@@ -699,14 +730,16 @@ public class Tutorial extends GameScreen {
 	 * 
 	 */
 	private void drawTutorial() {					
+		if (menuFront)
+			return;
+		
 		if (timeArrow >= 1f) {			
 			timeArrow = 0;
 		} else if (timeArrow < 0.5f) {
 			offsetArrow = (WIDTH_TILE*0.45f);
 		} else {
 			offsetArrow = (WIDTH_TILE*0.25f);
-		}
-			
+		}			
 			
 		switch (tutorialPart) {
 			case  0: // Mostrando a região do jogo /game 

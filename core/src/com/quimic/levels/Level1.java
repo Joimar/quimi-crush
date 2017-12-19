@@ -21,11 +21,16 @@ public class Level1 extends GameScreen {
 	private final int sizeMapW = 6; // Largura da matriz do jogo
 	private final int sizeMapH = 6; // Altura da matriz do jogo
 
+	private final float TIP_TIME = 8f; // Tempo limite para o jogo sinalizar um bloco para combinação	
 //*************************************************************//
 	private Animation       animation01;	
 	
-//*************************************************************//
+//*************************************************************//	    	
+	private float currentTipTime; // Tempo corrente para dar uma dica ao jogador;
+	private float rotation = 4f; // Grau de rotação para o bloco quimico quando for ativada a dica
 
+//*************************************************************//
+	
 	public Level1(QuimiCrush parent) {				
 	    super(parent);
 		
@@ -49,7 +54,8 @@ public class Level1 extends GameScreen {
 		for (int i = 0; i < QTD_INFO; i++) { // Insere as informações nos objetos dos itens de ajuda
 			tilesInfo[i] = new Tile(new Sprite(elementsT.get(H2O+i)), H2O+i, WIDTH_OBJECT_INFO*0.80f, HEIGHT_OBJECT_INFO*0.80f);
 		}*/				 
-						
+		currentTipTime = 0;				
+		
 		// Carrega animações
 		this.loadAnimations(); // Carrega as animações do jogo							
 		
@@ -103,6 +109,9 @@ public class Level1 extends GameScreen {
 			game.getCells().get(i).getActor().addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
+					// Zerando tempo corrente para dica
+					currentTipTime = 0;
+					
 					// Simplificando o acesso aos itens
 					Tile previousTile = (Tile) game.getCells().get(logic.activeXY).getActor();
 					Tile currentTile = (Tile) event.getListenerActor();
@@ -237,7 +246,17 @@ public class Level1 extends GameScreen {
 	public void render(float delta) {
 		//long time = System.currentTimeMillis();
 		
-		super.render(delta);			
+		super.render(delta);
+		currentTipTime += delta;
+		if (currentTipTime > TIP_TIME) {
+			if(currentTipTime > (TIP_TIME+0.5f)) {
+				rotation = rotation * (-1);
+				currentTipTime -= 0.5f;
+			}
+			((Tile) game.getCells().get(logic.findTip()).getActor()).shake(rotation);			
+		}
+		else 
+			((Tile) game.getCells().get(logic.findTip()).getActor()).shake(0);
 		
 		//System.out.println("Tempo Loop: "+(System.currentTimeMillis()-time));
 	}

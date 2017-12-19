@@ -31,6 +31,8 @@ public class Logic {
 	public final int MATCH_STATE  = 1;	
 	public final int FALL_STATE   = 2;
 	
+	private int tipPosition; // Posição no vetor do bloco quimico a ser sinalizado ao jogador 
+	
 	public boolean matched = false;
 	public boolean combined = false;
 	public int savedType = 0;
@@ -117,9 +119,16 @@ public class Logic {
         //viewport = new StretchViewport(windowWidth, windowHeight, camera);
         //viewport.apply();
 		
-		//this.tilesListener();		
+		//this.tilesListener();
 	}
-		
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int findTip() {
+		return tipPosition;
+	}
 	
 	/**
 	 * 
@@ -240,7 +249,7 @@ public class Logic {
 					} if ( (i + sizeAreaW) < (sizeAreaW * sizeAreaH) ) { // Baixo
 						if (((Tile) gameArea.getCells().get(i+sizeAreaW).getActor()).type == tile.type)
 							canShuffle = false;
-					}
+					}					
 					break;
 				case GameScreen.H2:					
 				case GameScreen.N2:							 
@@ -290,7 +299,12 @@ public class Logic {
 					}
 					break;
 			}
-		}
+			
+			if (!canShuffle) {
+				tipPosition = i;
+				break;
+			}
+		}				
 		
 		return canShuffle;
 	}

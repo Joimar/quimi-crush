@@ -148,6 +148,9 @@ abstract public class GameScreen implements Screen {
 	protected Label infoLabel;
 	protected Label preferencesLabel;
 	protected Label mainLobbyLabel;
+	
+	protected boolean menuFront; // Flag para sinalizar que o dialog de sair foi ativado e ficará na frente de todos os componentes desenhados
+	
 	protected TextureAtlas atlas; // Empacotamento das imagens 			
 	protected AtlasRegion  background; //
 	protected AtlasRegion  fieldBattle; //
@@ -419,7 +422,8 @@ abstract public class GameScreen implements Screen {
 		// Ir para o menu principal do jogo
 		mainLobbyLabel.addListener(new ClickListener() {			
 			@Override
-			public void clicked(InputEvent event, float x, float y) {													
+			public void clicked(InputEvent event, float x, float y) {
+				menuFront = true;
 				new Dialog("", skin) {
 					{
 						text("Abandonar fase?");						
@@ -430,6 +434,7 @@ abstract public class GameScreen implements Screen {
 					
 					@Override
 					protected void result(final Object object) {
+						menuFront = false;
 						if (object.toString().equals("s")) 
 							parent.changeScreen(parent.MAIN);
 					}
@@ -647,17 +652,15 @@ abstract public class GameScreen implements Screen {
 			Gdx.gl.glEnable(GL20.GL_BLEND);
 			blockRect.begin(ShapeRenderer.ShapeType.Filled);
 			blockRect.setColor(new Color(0, 0, 0, 0.5f));
-			blockRect.rect(0, 0, parent.windowWidth * PROPORTION_WIDTH_GAME, parent.windowHeight * PROPORTION_HEIGHT_GAME);
+			if (!menuFront)
+				blockRect.rect(0, 0, parent.windowWidth * PROPORTION_WIDTH_GAME, parent.windowHeight * PROPORTION_HEIGHT_GAME);
 			blockRect.end();
 			Gdx.gl.glDisable(GL20.GL_BLEND);
 		}
 		
-		batch.begin();
-		//System.out.println("GAMESTATE: "+battleState);
+		batch.begin();		
 		this.drawHero();
-		//System.out.println("GAMESTATE_HERO: "+battleState);
 		this.drawEnemy();
-		//System.out.println("GAMESTATE_ENEMY: "+battleState+"\n");
 		batch.end();		
 		
 		if (battleState == GAME_CONTINUE) {
