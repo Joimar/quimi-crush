@@ -422,9 +422,9 @@ public class Tutorial extends GameScreen {
 		tutorialWindow.add(msgWindow);
 		
 		beginTable.top();
-		beginTable.add(skipLabel).top().left().pad(5, 5, 5, 0).expandX();
+		beginTable.add(skipLabel).top().left().pad(20, 20, 20, 0).expandX();
 		beginTable.add(beginTitle).top().center().expandX();;
-		beginTable.add(nextLabel).top().right().pad(5, 0, 5, 5).expandX();		
+		beginTable.add(nextLabel).top().right().pad(20, 0, 20, 20).expandX();		
 			
 		noobStage.addActor(beginTable);		
 		
