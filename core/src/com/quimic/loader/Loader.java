@@ -15,13 +15,9 @@ public class Loader {
 	public final String SKIN = "skin/craftacular-ui.json";
 	public final String SKIN2 = "skin/support/pixthulhu-ui.json";	
 	// Textures
-	//public final String PLAYER_IMAGE = "images/game/player/hero_idle.png";
-	//public final String ENEMY_IMAGE = "images/game/enemy/enemy1_idle.png";
 	public final String LOADING_IMAGES = "images/loading.atlas";
 	// Sounds
-	public final String COMBINE_SOUND = "sounds/combine.wav";
-	//public final String MATCH_SOUND = "sounds/match.wav";
-
+	public final String COMBINE_SOUND = "sounds/combine.wav";	
 	public final String WATER_ATTACK_SOUND = "sounds/water.mp3";
 	public final String CARBON_ATTACK_SOUND = "sounds/diCarbon.mp3";
 	public final String GLASS_ATTACK_SOUND = "sounds/glass.mp3";

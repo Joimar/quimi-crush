@@ -131,7 +131,7 @@ public class PreferencesScreen implements Screen {
 		musicCheckBox        = new CheckBox(null, skin2);
 		soundEffectsSlider   = new Slider(0f, 1f, 0.1f, false, skin);
 		soundEffectsCheckBox = new CheckBox(null, skin2);
-		back                 = new TextButton("Back", skin);		
+		back                 = new TextButton("Voltar", skin);		
 
 		// Cria os rótulos para a tela de ajustes
 		titleLabel       = new Label("Ajustes", skin);	
