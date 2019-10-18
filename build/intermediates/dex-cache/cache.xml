@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Joimar\LEnDA\quimi-crush\core\build\libs\core-1.0.jar"
+        jumboMode="false"
+        revision="25.0.2"
+        sha1="bb090435144c1c4fdb29a39a323ad23f78d9bf62">
+        <dex dex="C:\Users\Joimar\LEnDA\quimi-crush\android\build\intermediates\pre-dexed\debug\core-1.0_df028922d87ab4e2addb976fe035998365bd08c7.jar" />
+    </item>
+    <item
+        jar="C:\Users\Joimar\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx\1.9.6\47d1e9b890e364ec28f128e9bb3b9a12a94c164\gdx-1.9.6.jar"
+        jumboMode="false"
+        revision="25.0.2"
+        sha1="047d1e9b890e364ec28f128e9bb3b9a12a94c164">
+        <dex dex="C:\Users\Joimar\LEnDA\quimi-crush\android\build\intermediates\pre-dexed\debug\gdx-1.9.6_eb4203dd5a83aa25dc678ed4e84457e681d0a68d.jar" />
+    </item>
+    <item
+        jar="C:\Users\Joimar\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx-box2d\1.9.6\c249ef4060a4fada952f278455c8f7b9cba3c18a\gdx-box2d-1.9.6.jar"
+        jumboMode="false"
+        revision="25.0.2"
+        sha1="c249ef4060a4fada952f278455c8f7b9cba3c18a">
+        <dex dex="C:\Users\Joimar\LEnDA\quimi-crush\android\build\intermediates\pre-dexed\debug\gdx-box2d-1.9.6_71750dbc175be8aee9112300b1ad6499ba42cab8.jar" />
+    </item>
+    <item
+        jar="C:\Users\Joimar\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx-backend-android\1.9.6\57c2831c870743712b808384187ea856e541878f\gdx-backend-android-1.9.6.jar"
+        jumboMode="false"
+        revision="25.0.2"
+        sha1="57c2831c870743712b808384187ea856e541878f">
+        <dex dex="C:\Users\Joimar\LEnDA\quimi-crush\android\build\intermediates\pre-dexed\debug\gdx-backend-android-1.9.6_7fcc7458a6d091e953bd54f7385c5d2782b21b46.jar" />
+    </item>
+
+</items>
