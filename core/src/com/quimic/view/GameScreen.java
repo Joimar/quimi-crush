@@ -90,13 +90,13 @@ abstract public class GameScreen implements Screen {
 	
 	/*protected final int sizeMapW; // Largura da matriz do jogo
 	protected final int sizeMapH; // Altura da matriz do jogo */
-	protected int QTD_INFO   = 4; // Valor default da quantidade de itens para informação/ajuda do jogo
+	protected int QTD_INFO   = 4; // Valor default da quantidade de itens para informaï¿½ï¿½o/ajuda do jogo
 	protected int LIFE_HERO  = 5; // Valores default da vida maxima do heroi
 	protected int LIFE_ENEMY = 3;  // Valores default da vida maxima do inimigo
 
 //*************************************************************//		
-	protected Stage          stage; // Controla e reage às entradas do usuário	
-	protected Stage          stageInfo; // Controla e reage às entradas do usuário para a tela de informações
+	protected Stage          stage; // Controla e reage ï¿½s entradas do usuï¿½rio	
+	protected Stage          stageInfo; // Controla e reage ï¿½s entradas do usuï¿½rio para a tela de informaï¿½ï¿½es
 	protected ScreenViewport sv; // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un	
 	protected OrthographicCamera cam;
 			
@@ -149,7 +149,7 @@ abstract public class GameScreen implements Screen {
 	protected Label preferencesLabel;
 	protected Label mainLobbyLabel;
 	
-	protected boolean menuFront; // Flag para sinalizar que o dialog de sair foi ativado e ficará na frente de todos os componentes desenhados
+	protected boolean menuFront; // Flag para sinalizar que o dialog de sair foi ativado e ficarï¿½ na frente de todos os componentes desenhados
 	
 	protected TextureAtlas atlas; // Empacotamento das imagens 			
 	protected AtlasRegion  background; //
@@ -194,7 +194,7 @@ abstract public class GameScreen implements Screen {
 		cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);		
 		sv = new ScreenViewport(cam);
 		stage = new Stage(sv);
-		stageInfo = new Stage(sv); // Palco para o catalogo de combinações
+		stageInfo = new Stage(sv); // Palco para o catalogo de combinaï¿½ï¿½es
 		
 		elementsT = new ArrayList<Texture>();
 		// Os elementos simples da tabela		
@@ -203,12 +203,12 @@ abstract public class GameScreen implements Screen {
 		elementsT.add(new Texture("images/game/chemic/C.png"));  // 2
 		elementsT.add(new Texture("images/game/chemic/N.png"));  // 3
 		elementsT.add(new Texture("images/game/chemic/Na.png")); // 4			
-		// Os elementos com duas combinações
+		// Os elementos com duas combinaï¿½ï¿½es
 		elementsT.add(new Texture("images/game/chemic/H2.png"));  // 5
 		elementsT.add(new Texture("images/game/chemic/O2.png"));  // 6
 		elementsT.add(new Texture("images/game/chemic/N2.png"));  // 7
 		elementsT.add(new Texture("images/game/chemic/Na2.png")); // 8		
-		// Os matches (combinação completa)
+		// Os matches (combinaï¿½ï¿½o completa)
 		elementsT.add(new Texture("images/game/chemic/H2O.png"));  // 9
 		elementsT.add(new Texture("images/game/chemic/CO2.png"));  // 10
 		elementsT.add(new Texture("images/game/chemic/N2O.png"));  // 11
@@ -221,7 +221,7 @@ abstract public class GameScreen implements Screen {
 		elementsTSelected.add(new Texture("images/game/chemic/selected/sC.png"));  // 2
 		elementsTSelected.add(new Texture("images/game/chemic/selected/sN.png"));  // 3
 		elementsTSelected.add(new Texture("images/game/chemic/selected/sNa.png")); // 4			
-		// Os elementos com duas combinações quando selecionado
+		// Os elementos com duas combinaÃ§Ãµes quando selecionado
 		elementsTSelected.add(new Texture("images/game/chemic/selected/sH2.png"));  // 5
 		elementsTSelected.add(new Texture("images/game/chemic/selected/sO2.png"));  // 6
 		elementsTSelected.add(new Texture("images/game/chemic/selected/sN2.png"));  // 7
@@ -245,7 +245,7 @@ abstract public class GameScreen implements Screen {
 		parent.assetsManager.finishLoading(); // Finaliza o carregamento das skins
 		skin = parent.assetsManager.MANAGER.get(parent.assetsManager.SKIN); // Recupera a skin
 
-		// Configura o componente que ira desenhar uma região escura na tela enquanto não for o turno do jogador  
+		// Configura o componente que ira desenhar uma regiï¿½o escura na tela enquanto nï¿½o for o turno do jogador  
 		blockRect = new ShapeRenderer();
 		blockRect.setColor(new Color(0, 0, 0, 0.5f));					
 		
@@ -276,7 +276,7 @@ abstract public class GameScreen implements Screen {
 	}
 	
 	/**
-	 * Recupera a sequência de sprites númerados de '01' até um determinado número
+	 * Recupera a sequï¿½ncia de sprites nï¿½merados de '01' atï¿½ um determinado nï¿½mero
 	 * 
 	 * @param name
 	 * @param begin
@@ -333,7 +333,7 @@ abstract public class GameScreen implements Screen {
 		background = atlas.findRegion("background"); // Captura o background da tela do loading	
 		fieldBattle = atlas.findRegion("fieldBattle"); // Captura o background da tela do loading		
 		
-		// Opções da area de informaçoes -> menu lateral
+		// Opï¿½ï¿½es da area de informaï¿½oes -> menu lateral
 		infoLabel        = new Label("?", skin, "title");
 		preferencesLabel = new Label("#", skin, "title");
 		mainLobbyLabel   = new Label("=", skin, "title");
@@ -442,7 +442,7 @@ abstract public class GameScreen implements Screen {
 			}		   
 		});
 		
-		// Evento para mostrar as combinações possíveis no jogo
+		// Evento para mostrar as combinaï¿½ï¿½es possï¿½veis no jogo
 		infoLabel.addListener(new ClickListener() {			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {													
@@ -450,7 +450,7 @@ abstract public class GameScreen implements Screen {
 				Gdx.input.setInputProcessor(stageInfo);
 			}		   
 		});
-		// Evento para fechar a página de informações
+		// Evento para fechar a pï¿½gina de informaï¿½ï¿½es
 		closeInfo.addListener(new ClickListener() {			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {													
@@ -458,7 +458,7 @@ abstract public class GameScreen implements Screen {
 				Gdx.input.setInputProcessor(stage);
 			}		   
 		});
-		// Evento para ir para o proximo catalogo de combinações
+		// Evento para ir para o proximo catalogo de combinaÃ§Ãµes
 		backInfo.addListener(new ClickListener() {			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {													
@@ -497,7 +497,7 @@ abstract public class GameScreen implements Screen {
 				infoWindow.add(nextInfo).bottom().right().expandX().padRight(10);
 			}		   
 		});
-		// Evento para ir à pagina anterior do catalogo de combinações		
+		// Evento para ir Ã  pagina anterior do catalogo de combinaÃ§Ãµes
 		nextInfo.addListener(new ClickListener() {			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {				
@@ -539,7 +539,7 @@ abstract public class GameScreen implements Screen {
 	}
 	
 	/**
-	 * Cria as páginas com informações sobre as combinações e sobre os compostos quimicos
+	 * Cria as pÃ¡ginas com informaÃ§Ãµes sobre as combinaÃ§Ãµs e sobre os compostos quÃ­micos
 	 */
 	protected void createInfosIn() {
 		tableH2O = new Table(skin);  // 1 			
@@ -617,7 +617,7 @@ abstract public class GameScreen implements Screen {
 			return;
 		} 
 			
-		// Segue o fluxo da lógica do jogo
+		// Segue o fluxo da lï¿½gica do jogo
 		logic.update();
 		
 		// Mudando contorno/imagem do item selecionado
@@ -667,7 +667,7 @@ abstract public class GameScreen implements Screen {
 			logic.gameState = logic.PLAYER_STATE;
 		} else if (battleState == GAME_WIN || battleState == GAME_LOSE) {			
 			if (battleState == GAME_WIN) {					
-				// Evita que perca a última fase concluida e extrapole o número total de fases
+				// Evita que perca a ï¿½ltima fase concluida e extrapole o nï¿½mero total de fases
 				if (currentLevel >= parent.getLevelPass() && currentLevel < parent.TOTAL_LEVELS)
 					parent.setLevelPass(currentLevel+1);			
 				msgTitleEndGame = new Label(":) Bom trabalho!", skin, "xp");		
@@ -707,9 +707,9 @@ abstract public class GameScreen implements Screen {
 			
 		} else if (battleState == HERO_ATTACK) { // ATACK
 			heroAnimationFinish = false;
-			if (! heroAttackAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
+			if (! heroAttackAnimation.isAnimationFinished(stateTime)) { // Animaï¿½ï¿½o herï¿½i ainda nï¿½o terminou
 				batch.draw((TextureRegion) heroAttackAnimation.getKeyFrame(stateTime, true), x, y);										
-			} else { // Animação herói terminou
+			} else { // Animaï¿½ï¿½o herï¿½i terminou
 				batch.draw((TextureRegion) heroAttackAnimation.getKeyFrame(0, true), x, y);
 				battleState = ENEMY_DAMAGE;				
 				heroAnimationFinish = true;
@@ -718,10 +718,10 @@ abstract public class GameScreen implements Screen {
 			}
 			
 		} else if (battleState == HERO_DAMAGE) { // DAMAGE
-			if (! heroDamageAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
+			if (! heroDamageAnimation.isAnimationFinished(stateTime)) { // Animaï¿½ï¿½o herï¿½i ainda nï¿½o terminou
 				batch.draw((TextureRegion) heroDamageAnimation.getKeyFrame(stateTime, true), x, y);				
-			} else { // Animação herói terminou
-				// Reduz uma vida do herói 
+			} else { // Animaï¿½ï¿½o herï¿½i terminou
+				// Reduz uma vida do herï¿½i 
 				if (--lifeHero <= 0) {
 					battleState = HERO_DIE;
 					heroAnimationFinish = false;
@@ -734,7 +734,7 @@ abstract public class GameScreen implements Screen {
 			}	
 			
 		} else if (battleState == HERO_DIE) { // DIE
-			if (! heroDieAnimation.isAnimationFinished(stateTime)) { // Animação herói ainda não terminou
+			if (! heroDieAnimation.isAnimationFinished(stateTime)) { // Animaï¿½ï¿½o herï¿½i ainda nï¿½o terminou
 				batch.draw((TextureRegion) heroDieAnimation.getKeyFrame(stateTime, true), x, y);				
 			} else { 				
 				battleState = GAME_LOSE;								
@@ -745,11 +745,11 @@ abstract public class GameScreen implements Screen {
 		}
 				
 		if (battleState != GAME_END) {
-			// Desenhar a vida do herói
-			for (int heartFill = 0; heartFill < lifeHero; heartFill++) { // Desenha os corações cheios
+			// Desenhar a vida do herï¿½i
+			for (int heartFill = 0; heartFill < lifeHero; heartFill++) { // Desenha os coraï¿½ï¿½es cheios
 				batch.draw(heart, x - heartFill*heart.getRegionWidth(), yHeart);
 			}
-			for (int heartNFill = LIFE_HERO; heartNFill > lifeHero && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
+			for (int heartNFill = LIFE_HERO; heartNFill > lifeHero && heartNFill > 0 ; heartNFill--) { // Desenha os coraï¿½ï¿½es vazios
 				batch.draw(nonHeart, x - (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
 			}
 		} else {
@@ -776,8 +776,8 @@ abstract public class GameScreen implements Screen {
 				batch.draw(enemy_idle, x, y);			
 			
 		} else if (battleState == ENEMY_ATTACK) { // ATTACK						
-			if (! enemyAttackAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou				
-				batch.draw((TextureRegion) enemyAttackAnimation.getKeyFrame(stateTime, true), x-20f, y); // Avanço do inimigo e atack								
+			if (! enemyAttackAnimation.isAnimationFinished(stateTime)) { // Animaï¿½ï¿½o inimigo ainda nï¿½o terminou				
+				batch.draw((TextureRegion) enemyAttackAnimation.getKeyFrame(stateTime, true), x-20f, y); // Avanï¿½o do inimigo e atack								
 			} else { 				
 				battleState = HERO_DAMAGE;								
 				heroAnimationFinish = false;
@@ -786,9 +786,9 @@ abstract public class GameScreen implements Screen {
 			}
 			
 		} else if (battleState == ENEMY_DAMAGE) { // DAMAGE			
-			if (! enemyDamageAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
+			if (! enemyDamageAnimation.isAnimationFinished(stateTime)) { // Animaï¿½ï¿½o inimigo ainda nï¿½o terminou
 				batch.draw((TextureRegion) enemyDamageAnimation.getKeyFrame(stateTime, true), x, y);				
-			} else { // Animação inimigo terminou
+			} else { // Animaï¿½ï¿½o inimigo terminou
 				// Reduz uma vida do inimigo 
 				if (--lifeEnemy <= 0) {
 					battleState = ENEMY_DIE;
@@ -802,7 +802,7 @@ abstract public class GameScreen implements Screen {
 			}
 			
 		} else if (battleState == ENEMY_DIE) { // DIE
-			if (! enemyDieAnimation.isAnimationFinished(stateTime)) { // Animação inimigo ainda não terminou
+			if (! enemyDieAnimation.isAnimationFinished(stateTime)) { // Animaï¿½ï¿½o inimigo ainda nï¿½o terminou
 				batch.draw((TextureRegion) enemyDieAnimation.getKeyFrame(stateTime, true), x, y);				
 			} else { 				
 				battleState = GAME_WIN;								
@@ -814,10 +814,10 @@ abstract public class GameScreen implements Screen {
 		
 		if (battleState != GAME_END) {
 			// Desenhar a vida do inimigo
-			for (int heartFill = 0; heartFill < lifeEnemy; heartFill++) { // Desenha os corações cheios
+			for (int heartFill = 0; heartFill < lifeEnemy; heartFill++) { // Desenha os coraï¿½ï¿½es cheios
 				batch.draw(heart, x + heartFill*heart.getRegionWidth(), yHeart);
 			}
-			for (int heartNFill = LIFE_ENEMY; heartNFill > lifeEnemy && heartNFill > 0 ; heartNFill--) { // Desenha os corações vazios
+			for (int heartNFill = LIFE_ENEMY; heartNFill > lifeEnemy && heartNFill > 0 ; heartNFill--) { // Desenha os coraï¿½ï¿½es vazios
 				batch.draw(nonHeart, x-1 + (heartNFill-1)*nonHeart.getRegionWidth(), yHeart);
 			}
 		} else {
