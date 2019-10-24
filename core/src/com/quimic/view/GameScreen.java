@@ -191,7 +191,8 @@ abstract public class GameScreen implements Screen {
 	public GameScreen(QuimiCrush parent) {		
 		this.parent = parent;
 		
-		cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);		
+		//cam = new OrthographicCamera(parent.windowWidth, parent.windowHeight);
+		cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		sv = new ScreenViewport(cam);
 		stage = new Stage(sv);
 		stageInfo = new Stage(sv); // Palco para o catalogo de combina��es
@@ -693,12 +694,14 @@ abstract public class GameScreen implements Screen {
 	/**
 	 * 
 	 */
-	protected void drawHero() {		
+	//AQUI!!!!!!!
+	protected void drawHero() {
 		float x = battle.getCells().get(battle.getCells().size-2).getActorX();
 		float y = battle.getCells().get(battle.getCells().size-2).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);				
 				
 		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-2).getActorHeight();   
-		
+		y=1030;
+		yHeart = y+50;
 		if (heroAnimationFinish && battleState != GAME_END) { // hero.idle
 			if (lifeHero <= 0)
 				batch.draw(hero_die, x, y);
@@ -763,12 +766,14 @@ abstract public class GameScreen implements Screen {
 	/**
 	 * 
 	 */
+	// AQUI!!!!!!!!!
 	protected void drawEnemy() {
 		float x = battle.getCells().get(battle.getCells().size-1).getActorX();
 		float y = battle.getCells().get(battle.getCells().size-1).getActorY() + (parent.windowHeight*PROPORTION_HEIGHT_GAME);
 
 		float yHeart = 50/*margem*/ + y + battle.getCells().get(battle.getCells().size-1).getActorHeight();
-		
+		y=1030;
+		yHeart = y+50;
 		if (enemyAnimationFinish && battleState != GAME_END) { // enemy.idle
 			if (lifeEnemy <= 0)
 				batch.draw(enemy_die, x, y);

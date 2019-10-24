@@ -23,17 +23,17 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.quimic.game.QuimiCrush;
 
 public class MainScreen implements Screen {
-	private final float PROPORTION_HEIGTH_MENU = 0.15f; // Porporção do grid do topMenu	
+	private final float PROPORTION_HEIGTH_MENU = 0.15f; // Porporï¿½ï¿½o do grid do topMenu	
 	
 	private QuimiCrush parent; // Quem orquestra tudo
 	
-	private Stage          stage;  // Controla e reage às entradas do usuário
+	private Stage          stage;  // Controla e reage ï¿½s entradas do usuï¿½rio
 	private ScreenViewport sv;     // Relaciona as medidas da tela do jogo com a do mundo real 1px = 1un	
 	private Table 		   view;   // Grid para os outros menus;      
-	private Table          levels; // Grid dos níveis do jogo
+	private Table          levels; // Grid dos nï¿½veis do jogo
 	private Table          menu;   // Grid do menu da tela inicial
-	private Skin           skin;   // Estilo dos botões	
-	private ScrollPane     scrollLevels; // Responsavél pela barra de rolagem na tela para visualizar as fases
+	private Skin           skin;   // Estilo dos botï¿½es	
+	private ScrollPane     scrollLevels; // Responsavï¿½l pela barra de rolagem na tela para visualizar as fases
 	
 //*************************************************************//	
 	private TextButton preferences;
@@ -72,7 +72,7 @@ public class MainScreen implements Screen {
 	 * 
 	 */
 	private void buttonsListener() {						
-		// Adicionando evento para o botão de ajustes
+		// Adicionando evento para o botï¿½o de ajustes
 		preferences.addListener(new ChangeListener() {			
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -80,7 +80,7 @@ public class MainScreen implements Screen {
 			}
 		});
 		
-		// Adicionando evento para os botões de fase
+		// Adicionando evento para os botï¿½es de fase
 		for (int l = 0; l < parent.TOTAL_LEVELS; l++) {						
 			gameLevels.get(l).addListener(new ChangeListener() {							
 				@Override
@@ -102,11 +102,11 @@ public class MainScreen implements Screen {
 		view = new Table(); // Cria a tabela
 		view.setFillParent(true);
 		view.setBackground(new TiledDrawable(background));
-		//view.setDebug(true); // linhas de depuração na tela
-		// Cria o grid para inserir as opções e ajustes do jogo
+		//view.setDebug(true); // linhas de depuraï¿½ï¿½o na tela
+		// Cria o grid para inserir as opï¿½ï¿½es e ajustes do jogo
 		menu = new Table();
 		menu.setSize(parent.windowWidth, parent.windowHeight * PROPORTION_HEIGTH_MENU);
-		// Cria o grid para inserção das fases do jogo
+		// Cria o grid para inserï¿½ï¿½o das fases do jogo
 		levels = new Table();		
 		scrollLevels = new ScrollPane(levels, skin);
 		
@@ -116,13 +116,13 @@ public class MainScreen implements Screen {
 		view.add(scrollLevels);
 		stage.addActor(view); // Adiciona a tabela no stage	
 				
-		// Organiza botões de ajustes e opções
+		// Organiza botï¿½es de ajustes e opï¿½ï¿½es
 		preferences = new TextButton("Ajustes", skin);		
 		menu.add(preferences);
 			
-		// Organiza botões das fases
+		// Organiza botï¿½es das fases
 		gameLevels = new ArrayList<TextButton>(parent.TOTAL_LEVELS);				
-		gameLevels.add(0, new TextButton("Tutorial", skin));
+		gameLevels.add(0, new TextButton("Tutorial teste", skin));
 		levels.add(gameLevels.get(0));
 		for (int l = 1; l < parent.TOTAL_LEVELS; l++) {
 			levels.row().pad(10, 0, 0, 0);	
@@ -131,7 +131,7 @@ public class MainScreen implements Screen {
 			levels.add(gameLevels.get(l));
 		}		
 		
-		// Chama o método que dá ação aos botões
+		// Chama o mï¿½todo que dï¿½ aï¿½ï¿½o aos botï¿½es
 		this.buttonsListener();
 	}
 	
