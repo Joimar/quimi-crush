@@ -73,5 +73,6 @@
     <orderEntry type="library" exported="" name="Gradle: com.badlogicgames.gdx:gdx-box2d:1.9.6@jar" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.badlogicgames.gdx:gdx:1.9.6@jar" level="project" />
     <orderEntry type="module" module-name="core" exported="" />
+    <orderEntry type="module" module-name="core" exported="" />
   </component>
 </module>
