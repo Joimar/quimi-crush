@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="061a8374-b503-4fce-9a3b-acb5699081b3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" afterDir="false" />
@@ -9,6 +10,9 @@
       <change beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/com/quimic/levels/Tutorial.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/quimic/levels/Tutorial.java" afterDir="false" />
     </list>
+=======
+    <list default="true" id="061a8374-b503-4fce-9a3b-acb5699081b3" name="Default Changelist" comment="" />
+>>>>>>> Stashed changes
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,11 +38,14 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+<<<<<<< Updated upstream
         <entry file="file://$PROJECT_DIR$/android/assets/images/game/tutorial/dedopos.png">
           <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+=======
+>>>>>>> Stashed changes
         <entry file="file://$PROJECT_DIR$/android/assets/images/loading.atlas">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
@@ -51,8 +58,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/com/quimic/view/GameScreen.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="10864">
               <caret line="775" column="22" selection-start-line="775" selection-start-column="22" selection-end-line="775" selection-end-column="22" />
+=======
+            <state relative-caret-position="12359">
+              <caret line="770" column="8" selection-start-line="770" selection-start-column="8" selection-end-line="770" selection-end-column="8" />
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -69,17 +81,38 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/com/quimic/view/MainScreen.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="1666">
+=======
+            <state relative-caret-position="1768">
+>>>>>>> Stashed changes
               <caret line="124" column="51" selection-start-line="124" selection-start-column="51" selection-end-line="124" selection-end-column="51" />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< Updated upstream
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/com/quimic/levels/Tutorial.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="297">
               <caret line="111" column="29" selection-start-line="111" selection-start-column="29" selection-end-line="111" selection-end-column="29" />
+=======
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/com/quimic/levels/Tutorial.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1411">
+              <caret line="108" column="29" selection-start-line="108" selection-start-column="29" selection-end-line="108" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/desktop/src/com/quimic/game/desktop/DesktopLauncher.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -175,6 +208,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+<<<<<<< Updated upstream
       <pane id="ProjectPane" />
       <pane id="Scope" />
       <pane id="AndroidView">
@@ -254,6 +288,11 @@
           <select />
         </subPane>
       </pane>
+=======
+      <pane id="AndroidView" />
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
+>>>>>>> Stashed changes
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -587,22 +626,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/quimic/view/MainScreen.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="1666">
+=======
+        <state relative-caret-position="1768">
+>>>>>>> Stashed changes
           <caret line="124" column="51" selection-start-line="124" selection-start-column="51" selection-end-line="124" selection-end-column="51" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/quimic/view/GameScreen.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="10864">
           <caret line="775" column="22" selection-start-line="775" selection-start-column="22" selection-end-line="775" selection-end-column="22" />
+=======
+        <state relative-caret-position="12359">
+          <caret line="770" column="8" selection-start-line="770" selection-start-column="8" selection-end-line="770" selection-end-column="8" />
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/quimic/levels/Tutorial.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="297">
           <caret line="111" column="29" selection-start-line="111" selection-start-column="29" selection-end-line="111" selection-end-column="29" />
+=======
+        <state relative-caret-position="1411">
+          <caret line="108" column="29" selection-start-line="108" selection-start-column="29" selection-end-line="108" selection-end-column="29" />
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>
