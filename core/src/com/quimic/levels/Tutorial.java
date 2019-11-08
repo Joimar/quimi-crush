@@ -39,7 +39,7 @@ public class Tutorial extends GameScreen {
 //*************************************************************//
 	private Animation       animation01;
 	
-	private AtlasRegion arrow; // Mï¿½o com o dedo apontando -> utilizado para o tutorial
+	private AtlasRegion arrow; // Mão com o dedo apontando -> utilizado para o tutorial
 	private float xArrow, yArrow, offsetArrow;
 	private float timeArrow; // Usado para deixar o dedo mais visivel ao jogador (~mexendo~)
 	
@@ -61,20 +61,17 @@ public class Tutorial extends GameScreen {
 	private Label nextLabel;
 	private Label skipLabel;		
 	private Label beginTitle;
-	private Label historia;
 	private Label historyTitle;
 	
 	private TextArea textTutorial;
 	private TextField TextHistory;
 	
 	private Window tutorialWindow; 
-	private Table beginTable;
-
-	private Table story;
+	private Table beginTable;	
 	
 	private TextureRegion currentFrameHistory;
 	
-	private Stage noobStage; // Controla e reage ï¿½s entradas do usuï¿½rio para a etapa de historia e tutorial	
+	private Stage noobStage; // Controla e reage às entradas do usuário para a etapa de historia e tutorial	
 	
 	private String msgWindow;
 	
@@ -86,32 +83,31 @@ public class Tutorial extends GameScreen {
 	public Tutorial(QuimiCrush parent) {				
 	    super(parent);
 
-	    // Configura as vidas do heroi e vilï¿½o, respectivamente
+	    // Configura as vidas do heroi e vilão, respectivamente
 		LIFE_HERO = 2;
 		LIFE_ENEMY = 1;
 	    
-	    noobStage = new Stage(stage.getViewport()); // Cria o palco para a etapa de histï¿½ria e tutorial
+	    noobStage = new Stage(stage.getViewport()); // Cria o palco para a etapa de história e tutorial
 	    
 	    // Configura a largura e altura do bloco quimico 
- 		WIDTH_TILE  = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW; // Configura a largura do bloco que contem o componente quï¿½mico
- 		HEIGHT_TILE = (parent.windowHeight * PROPORTION_HEIGHT_GAME) / sizeMapH; // Configura a altura do bloco que contem o componente quï¿½mico
+ 		WIDTH_TILE  = (parent.windowWidth * PROPORTION_WIDTH_GAME) / sizeMapW; // Configura a largura do bloco que contem o componente químico
+ 		HEIGHT_TILE = (parent.windowHeight * PROPORTION_HEIGHT_GAME) / sizeMapH; // Configura a altura do bloco que contem o componente químico
 
- 		// Configura a largura e altura dos itens na area de informaï¿½ï¿½es 
+ 		// Configura a largura e altura dos itens na area de informações 
  		WIDTH_OBJECT_INFO  = (parent.windowWidth * PROPORTION_WIDTH_INFO); // Configura a largura dos blocos de ajuda do jogo
  		HEIGHT_OBJECT_INFO = (parent.windowHeight * PROPORTION_HEIGHT_INFO) / (QTD_INFO+4); // Configura a altura dos blocos de ajuda do jogo
 		
-		// Cria os objetos que contï¿½m as informaï¿½ï¿½es sobre os blocos do jogo, tanto os de ajuda quanto os para combinaï¿½ï¿½o
-		tiles = new Tile[sizeMapW][sizeMapH]; // Cria a matriz para as imagens dos blocos quï¿½micos quimï¿½cos 
+		// Cria os objetos que contém as informações sobre os blocos do jogo, tanto os de ajuda quanto os para combinação
+		tiles = new Tile[sizeMapW][sizeMapH]; // Cria a matriz para as imagens dos blocos químicos quimícos 
 		/*tilesInfo = new Tile[QTD_INFO];
-		for (int i = 0; i < QTD_INFO; i++) { // Insere as informaï¿½ï¿½es nos objetos dos itens de ajuda
+		for (int i = 0; i < QTD_INFO; i++) { // Insere as informações nos objetos dos itens de ajuda
 			tilesInfo[i] = new Tile(new Sprite(elementsT.get(H2O+i)), H2O+i, WIDTH_OBJECT_INFO*0.80f, HEIGHT_OBJECT_INFO*0.80f);
 		}*/					 
 		
-		// Permitindo a apariï¿½ï¿½o do tutorial e da historia no inicio da fase
-		//historyScene  = true;
-		historyScene  = false;
+		// Permitindo a aparição do tutorial e da historia no inicio da fase
+		historyScene  = true;
 		tutorialScene = true;				
-		// Sequï¿½ncia de apariï¿½ï¿½o das etapas do tutorial
+		// Sequência de aparição das etapas do tutorial
 		tutorialPart = 0;			
 		dialogPart   = 0;
 		
@@ -119,14 +115,13 @@ public class Tutorial extends GameScreen {
 		widthTutorial  = parent.windowWidth;
 		heightTutorial = parent.windowHeight * PROPORTION_HEIGHT_GAME;
 		
-		// Carrega animaï¿½ï¿½es
-		this.loadAnimations(); // Carrega as animaï¿½ï¿½es do jogo		
-		this.loadHistoryAnimations(); // Carrega animaï¿½ï¿½es da histï¿½ria
-		this.loadTutorialAnimations(); // Carrega animaï¿½ï¿½es do tutorial						
+		// Carrega animações
+		this.loadAnimations(); // Carrega as animações do jogo		
+		this.loadHistoryAnimations(); // Carrega animações da história
+		this.loadTutorialAnimations(); // Carrega animações do tutorial						
 		
 		nextLabel = new Label("> Proximo", skin); // Cria link para a proxima tela de historia/tutorial
-		skipLabel = new Label(">> Pular", skin);	// Cria link para pular para o fim da historia/tutorial
-
+		skipLabel = new Label(">> Pular", skin);	// Cria link para pular para o fim da historia/tutorial										
 		this.eventsListener(); // Insere os eventos de click aos labels de 'next' e 'skip'
 		
 		// Ativando debug do palco
@@ -136,30 +131,30 @@ public class Tutorial extends GameScreen {
 	}
 		
 	/**
-	 * Carrega as imagens e animaï¿½ï¿½es para a batalha no jogo	
+	 * Carrega as imagens e animações para a batalha no jogo	
 	 */
 	private void loadAnimations() {
-		heart      = atlas.findRegion("heart");    // Captura a imagem de coraï¿½ï¿½o cheio
-		nonHeart   = atlas.findRegion("heart-bg"); // Captura a imagem de coraï¿½ï¿½o vazio		
+		heart      = atlas.findRegion("heart");    // Captura a imagem de coração cheio
+		nonHeart   = atlas.findRegion("heart-bg"); // Captura a imagem de coração vazio		
 				
 		Array<TextureRegion> regionsT;
-		// Animaï¿½ï¿½es do hero		
-		hero_idle = atlas.findRegion("hero_idle"); // Herï¿½i parado 
+		// Animações do hero		
+		hero_idle = atlas.findRegion("hero_idle"); // Herói parado 
 		// ...
 		regionsT = this.addRegionsArray("attack_", 1, 4);
-		heroAttackAnimation = new Animation(0.2f, regionsT, PlayMode.NORMAL); // Atack do herï¿½i
+		heroAttackAnimation = new Animation(0.2f, regionsT, PlayMode.NORMAL); // Atack do herói
 		// ..
 		regionsT = this.addRegionsArray("damage1_", 1, 2);
-		heroDamageAnimation = new Animation(0.3f, regionsT, PlayMode.NORMAL); // Dano no herï¿½i
+		heroDamageAnimation = new Animation(0.3f, regionsT, PlayMode.NORMAL); // Dano no herói
 		// ...
 		regionsT = this.addRegionsArray("die_", 1, 3);
-		heroDieAnimation = new Animation(0.6f, regionsT, PlayMode.NORMAL); // Herï¿½i morto
-		hero_die = atlas.findRegion("hero_die");                           // Herï¿½i caido
+		heroDieAnimation = new Animation(0.6f, regionsT, PlayMode.NORMAL); // Herói morto
+		hero_die = atlas.findRegion("hero_die");                           // Herói caido
 		// ...
 		regionsT = this.addRegionsArray("hero_win_", 1, 2); 
-		heroWinAnimation = new Animation(0.4f, regionsT, PlayMode.LOOP); // Pose da vitï¿½ria
+		heroWinAnimation = new Animation(0.4f, regionsT, PlayMode.LOOP); // Pose da vitória
 		
-		// Animaï¿½ï¿½es do enemy		
+		// Animações do enemy		
 		enemy_idle = atlas.findRegion("enemy1_idle"); // Inimigo parado
 		// ...
 		regionsT = this.addRegionsArray("enemy1_attack1_",1, 5);
@@ -174,31 +169,31 @@ public class Tutorial extends GameScreen {
 	}
 	
 	/**
-	 * Carrega as imagens e animaï¿½ï¿½es da histï¿½ria do jogo
+	 * Carrega as imagens e animações da história do jogo
 	 */
 	private void loadHistoryAnimations() {
 		
 	}
 	
 	/**
-	 * Carrega as imagens e animaï¿½ï¿½es do tutorial
+	 * Carrega as imagens e animações do tutorial
 	 */
 	private void loadTutorialAnimations() {
-		arrow = atlas.findRegion("dedoTutorial"); // Captura a imagem da mï¿½o com o dedo
+		arrow = atlas.findRegion("dedoTutorial"); // Captura a imagem da mão com o dedo
 		timeArrow = 0;
 	}
 
 	/**
-	 * Adiciona os eventos de avanï¿½ar na historia/tutorial ('> proximo') e 	
+	 * Adiciona os eventos de avançar na historia/tutorial ('> proximo') e 	
 	 * de pular historia ('>> pular')
 	 */
 	private void eventsListener() {
-		// Adicionando evento para o "botï¿½o" de avanï¿½ar na historia				
+		// Adicionando evento para o "botão" de avançar na historia				
 		nextLabel.addListener(new ClickListener() {			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {									
 				historyPart++;
-				// TODO histï¿½ria
+				// TODO história
 				if (historyPart > 2) { // EM DESENVOLVIMENTO					
 					historyScene = false;	
 					stateTime = 0;					
@@ -208,7 +203,7 @@ public class Tutorial extends GameScreen {
 			}		   
 		});
 		
-		// Adicionando evento para o "botï¿½o" de pular historia
+		// Adicionando evento para o "botão" de pular historia
 		skipLabel.addListener(new ClickListener() {			
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -220,7 +215,7 @@ public class Tutorial extends GameScreen {
 	}			
 	
 	/**
-	 * Responsï¿½vel por atribuir os eventos para cada bloco na ï¿½rea do jogo (os blocos quimicos das combinaï¿½ï¿½es)
+	 * Responsável por atribuir os eventos para cada bloco na área do jogo (os blocos quimicos das combinações)
 	 */
 	public void tilesListener() {
 		for (int i = 0; i < game.getCells().size; i++) {
@@ -235,7 +230,7 @@ public class Tutorial extends GameScreen {
 					if (logic.gameState != logic.PLAYER_STATE) 
 						return;
 					
-					// Verificando por combinaï¿½ï¿½es de elementos
+					// Verificando por combinações de elementos
 					if (logic.tileIsActive) {						
 						if (logic.tileIsActive) {							
 							// Verifica se o segundo item clicado foi do lado ESQUERDO
@@ -294,7 +289,7 @@ public class Tutorial extends GameScreen {
 						logic.gameState = logic.MATCH_STATE;
 					}
 
-					// Selecionando um bloco quï¿½mico
+					// Selecionando um bloco químico
 					//if (!logic.secondTap) {
 					if ( !(logic.combined || logic.matched) ) {
 						if (!currentTile.destroy) { // if (currentTile.type != 100) {
@@ -312,14 +307,14 @@ public class Tutorial extends GameScreen {
 							} else if (logic.activeXY == 4 && tutorialPart == 8) {
 								wait = false;
 								tutorialPart++; // 8
-							} else if (logic.activeXY == 4 && (tutorialPart <= 7 || tutorialPart > 10)) { // Nï¿½o estï¿½ seguindo o tutorial
+							} else if (logic.activeXY == 4 && (tutorialPart <= 7 || tutorialPart > 10)) { // Não está seguindo o tutorial
 								logic.tileIsActive = false;
-								previousTile.activated = false; // Nï¿½o permite sair da sequï¿½ncia do tutorial
-								currentTile.activated = false; // Nï¿½o permite sair da sequï¿½ncia do tutorial
-							} else if (logic.activeXY == 8) { // Nï¿½o estï¿½ seguindo o tutorial
+								previousTile.activated = false; // Não permite sair da sequência do tutorial
+								currentTile.activated = false; // Não permite sair da sequência do tutorial
+							} else if (logic.activeXY == 8) { // Não está seguindo o tutorial
 								logic.tileIsActive = false;
-								previousTile.activated = false; // Nï¿½o permite sair da sequï¿½ncia do tutorial
-								currentTile.activated = false; // Nï¿½o permite sair da sequï¿½ncia do tutorial
+								previousTile.activated = false; // Não permite sair da sequência do tutorial
+								currentTile.activated = false; // Não permite sair da sequência do tutorial
 							}
 														
 
@@ -368,7 +363,7 @@ public class Tutorial extends GameScreen {
 		noobStage.clear();
 		Gdx.input.setInputProcessor(noobStage);			
 		
-		// Criaï¿½ï¿½o das tiles -> os componentes quï¿½micos -> Para a fa se tutorial predefinida
+		// Criação das tiles -> os componentes químicos -> Para a fa se tutorial predefinida
 		Tile newTile = 				
         tiles[0][0] = new Tile(new Sprite(elementsT.get(C)), C, WIDTH_TILE, HEIGHT_TILE);
 		tiles[0][1] = new Tile(new Sprite(elementsT.get(C)), C, WIDTH_TILE, HEIGHT_TILE);
@@ -411,37 +406,13 @@ public class Tutorial extends GameScreen {
 			info.row().padBottom(10f);
 			info.add(tilesInfo[i]);			
 		}	*/								
-		//AQUI!!!
-		// Histï¿½ria e tutorial
-		beginTable = new Table(skin); // Criaï¿½ï¿½o da tabela para a histï¿½ria/tutorial 
+		
+		// História e tutorial
+		beginTable = new Table(skin); // Criação da tabela para a história/tutorial 
 		beginTable.setFillParent(true);		
-		beginTitle = new Label("Historia", skin, "bold");
-
-		story = new Table(skin);
-		historia = new Label("um ser roubou o cristal que dava vida \n " +
-				"ao vilarejo dele e destruiu tudo que sobrou, \n " +
-				"daÃ­ ele foi atrÃ¡s desse grupo. Pra isso ele \n " +
-				"precisava dominar alguns elementos para conseguir \n" +
-				" ir derrotando os vilÃµes" , skin , "bold");
-
-	/*	new Dialog("", skin) {
-			{
-				text("um ser roubou o cristal que dava vida ao vilarejo dele \n " +
-						"e destruiu tudo que sobrou, daÃ­ ele foi atrÃ¡s desse grupo.\n"+
-						"Pra isso ele precisava dominar alguns elementos para conseguir ir derrotando os vilÃµes");
-			//	button("Ok", "");
-				this.setMovable(false);
-			}
-
-			@Override
-			protected void result(final Object object) {
-				dialogPart++; // 4
-				tutorialPart++; // 4
-			}
-		}.show(stage);//.setBounds(x, y, w, h); */
-
-
-		tutorialWindow = new Window("", skin); // Criaï¿½ï¿½o de uma janela para inserir informaï¿½ï¿½es
+		beginTitle = new Label("Historia", skin, "bold"); 		
+		
+		tutorialWindow = new Window("", skin); // Criação de uma janela para inserir informações		
 		tutorialWindow.align(Align.center);
 
 		// Mensagem inicial para a janela
@@ -454,11 +425,9 @@ public class Tutorial extends GameScreen {
 		beginTable.add(skipLabel).top().left().pad(20, 20, 20, 0).expandX();
 		beginTable.add(beginTitle).top().center().expandX();;
 		beginTable.add(nextLabel).top().right().pad(20, 0, 20, 20).expandX();		
-	//	beginTable.add(historia).center() .pad(200, 0, 20, 0).expandY();
-
-
-		noobStage.addActor(beginTable);
-
+			
+		noobStage.addActor(beginTable);		
+		
 		this.tilesListener(); // Adiciona os eventos de click nos blocos quimicos a partir da logica (logic)						
 	}
 	
@@ -475,7 +444,7 @@ public class Tutorial extends GameScreen {
 			
 			//Gdx.gl.glDisable(GL20.GL_BLEND);
 			
-			// Segue o fluxo da lï¿½gica do jogo
+			// Segue o fluxo da lógica do jogo
 			logic.update();
 			
 			// Mudando contorno/imagem do item selecionado
@@ -537,7 +506,7 @@ public class Tutorial extends GameScreen {
 				logic.gameState = logic.PLAYER_STATE;
 			} else if (battleState == GAME_WIN || battleState == GAME_LOSE) {			
 				if (battleState == GAME_WIN) {					
-					// Evita que perca a ï¿½ltima fase concluida e extrapole o nï¿½mero total de fases
+					// Evita que perca a última fase concluida e extrapole o número total de fases
 					if (currentLevel >= parent.getLevelPass() && currentLevel < parent.TOTAL_LEVELS)
 						parent.setLevelPass(currentLevel+1);			
 					msgTitleEndGame = new Label(":) Bom trabalho!", skin, "xp");		
@@ -592,7 +561,7 @@ public class Tutorial extends GameScreen {
 		float x, y, w, h;
 		wait = true;
 		switch (dialogPart) {					
-			case  0: // Mostrando a regiï¿½o do jogo /game 				
+			case  0: // Mostrando a região do jogo /game 				
 				w = (parent.windowWidth*PROPORTION_WIDTH_GAME)*0.7f; 
 				h = (parent.windowHeight*PROPORTION_HEIGHT_GAME)*0.7f;
 				x = ((parent.windowWidth*PROPORTION_WIDTH_GAME) - w) / 2;
@@ -614,7 +583,7 @@ public class Tutorial extends GameScreen {
 				}.show(stage).setBounds(x, y, w, h);									
 				
 				break;
-			case 1: // Mostrando a regiï¿½o da batalha										
+			case 1: // Mostrando a região da batalha										
 				w = (parent.windowWidth*PROPORTION_WIDTH_BATTLE)*0.7f; 
 				h = (parent.windowHeight*PROPORTION_HEIGHT_BATTLE)*0.7f;
 				x = ((parent.windowWidth*PROPORTION_WIDTH_BATTLE) - w) / 2;
@@ -636,7 +605,7 @@ public class Tutorial extends GameScreen {
 				}.show(stage).setBounds(x, y, w, h);									
 				
 				break;				
-			case 2: // Mostrando a regiï¿½o do catalogo de informaï¿½ï¿½es de combinaï¿½ï¿½es						
+			case 2: // Mostrando a região do catalogo de informações de combinações						
 				w = (parent.windowWidth*PROPORTION_WIDTH_INFO); 
 				h = (parent.windowHeight*PROPORTION_HEIGHT_INFO)*0.8f;
 				x = ((parent.windowWidth*PROPORTION_WIDTH_INFO) - w) + parent.windowWidth*PROPORTION_WIDTH_GAME; 
@@ -679,7 +648,7 @@ public class Tutorial extends GameScreen {
 				}.show(stage);//.setBounds(x, y, w, h);
 				
 				break;
-			case 4: // Informando sobre selecionar outro componente para combinaï¿½ï¿½o simples (combine)
+			case 4: // Informando sobre selecionar outro componente para combinação simples (combine)
 				/*w = (parent.windowWidth*PROPORTION_WIDTH_GAME)*0.7f; 
 				h = (parent.windowHeight*PROPORTION_HEIGHT_GAME)*0.7f;
 				x = ((parent.windowWidth*PROPORTION_WIDTH_GAME) - w) / 2;
@@ -727,7 +696,7 @@ public class Tutorial extends GameScreen {
 				}.show(stage);
 				
 				break;
-			case 6: // Informando sobre selecionar o ï¿½ltimo componente para combinaï¿½ï¿½o master (match)			
+			case 6: // Informando sobre selecionar o último componente para combinação master (match)			
 				new Dialog("", skin) {
 					{
 						text("Selecione o ultimo\ncomponente para formar\num oxido");
@@ -773,7 +742,7 @@ public class Tutorial extends GameScreen {
 		}			
 			
 		switch (tutorialPart) {
-			case  0: // Mostrando a regiï¿½o do jogo /game 
+			case  0: // Mostrando a região do jogo /game 
 				Gdx.gl.glEnable(GL20.GL_BLEND);
 				blockRect.begin(ShapeRenderer.ShapeType.Filled);
 				blockRect.setColor(new Color(0, 0, 0, 0.6f));
@@ -782,7 +751,7 @@ public class Tutorial extends GameScreen {
 				blockRect.end();
 				Gdx.gl.glDisable(GL20.GL_BLEND);
 				break;
-			case 1: // Mostrando a regiï¿½o da batalha
+			case 1: // Mostrando a região da batalha
 				Gdx.gl.glEnable(GL20.GL_BLEND);
 				blockRect.begin(ShapeRenderer.ShapeType.Filled);
 				blockRect.setColor(new Color(0, 0, 0, 0.6f));
@@ -791,7 +760,7 @@ public class Tutorial extends GameScreen {
 				blockRect.end();
 				Gdx.gl.glDisable(GL20.GL_BLEND);
 				break;
-			case  2:  // Mostrando a regiï¿½o do catalogo de informaï¿½ï¿½es de combinaï¿½ï¿½es
+			case  2:  // Mostrando a região do catalogo de informações de combinações
 				Gdx.gl.glEnable(GL20.GL_BLEND);
 				blockRect.begin(ShapeRenderer.ShapeType.Filled);
 				blockRect.setColor(new Color(0, 0, 0, 0.6f));
